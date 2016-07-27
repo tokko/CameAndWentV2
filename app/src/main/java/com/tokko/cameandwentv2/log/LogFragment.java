@@ -54,6 +54,7 @@ public class LogFragment extends Fragment {
         le.date = now.withMillisOfDay(0).getMillis();
         le.Location = new Location();
         le.Location.name = "Leffe";
+        le.Location.save();
         le.save();
         logEntryAdapter.notifyDataSetChanged();
     }
