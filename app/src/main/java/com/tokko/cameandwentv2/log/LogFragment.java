@@ -4,7 +4,6 @@ import android.app.Fragment;
 import android.widget.ListView;
 import android.widget.ToggleButton;
 
-import com.activeandroid.query.Delete;
 import com.activeandroid.query.Select;
 import com.tokko.cameandwentv2.R;
 import com.tokko.cameandwentv2.dbmodels.Location;
@@ -43,7 +42,6 @@ public class LogFragment extends Fragment {
 
     @AfterViews
     public void bindAdapters() {
-        new Delete().from(LogEntry.class).execute();
         list.setAdapter(logEntryAdapter);
     }
     @Click(R.id.clockButton)

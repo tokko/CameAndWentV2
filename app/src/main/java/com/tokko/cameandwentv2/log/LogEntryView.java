@@ -7,6 +7,7 @@ import android.widget.TextView;
 import com.tokko.cameandwentv2.R;
 import com.tokko.cameandwentv2.dbmodels.LogEntry;
 
+import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EViewGroup;
 import org.androidannotations.annotations.ViewById;
 
@@ -21,14 +22,22 @@ public class LogEntryView extends LinearLayout {
     TextView time;
     @ViewById
     TextView location;
+    private LogEntry entry;
+
     public LogEntryView(Context context) {
         super(context);
     }
 
     public void bind(LogEntry entry) {
+        this.entry = entry;
         action.setText(entry.entered ? "Entered" : "Exited");
         time.setText(entry.dateTime + "");
         if (entry.Location != null)
             location.setText(entry.Location.name);
+    }
+
+    @Click(R.id.delete)
+    public void onDeleteClick() {
+        entry.delete();
     }
 }
