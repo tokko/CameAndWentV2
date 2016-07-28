@@ -6,8 +6,9 @@ import android.widget.ToggleButton;
 
 import com.activeandroid.query.Select;
 import com.tokko.cameandwentv2.R;
-import com.tokko.cameandwentv2.dbmodels.Location;
 import com.tokko.cameandwentv2.dbmodels.LogEntry;
+import com.tokko.cameandwentv2.dbmodels.ResourceAccess;
+import com.tokko.cameandwentv2.utils.TimeManager;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Bean;
@@ -31,6 +32,12 @@ public class LogFragment extends Fragment {
     @Bean
     LogEntryAdapter logEntryAdapter;
 
+    @Bean
+    ResourceAccess resourceAccess;
+
+    @Bean
+    TimeManager timeManager;
+
     @AfterViews
     public void init() {
         LogEntry le = new Select().from(LogEntry.class).orderBy("date DESC").executeSingle();
@@ -44,16 +51,10 @@ public class LogFragment extends Fragment {
     public void bindAdapters() {
         list.setAdapter(logEntryAdapter);
     }
+
     @Click(R.id.clockButton)
     public void onClockButtonClick() {
-        LogEntry le = new LogEntry();
-        DateTime now = new DateTime().now();
-        le.dateTime = now.getMillis();
-        le.date = now.withMillisOfDay(0).getMillis();
-        le.Location = new Location();
-        le.Location.name = "Leffe";
-        le.Location.save();
-        le.save();
+        resourceAccess.CommitLogEntry(timeManager.getCurrentTime(), clockButton.isChecked(), "Leffe");
         logEntryAdapter.notifyDataSetChanged();
     }
 

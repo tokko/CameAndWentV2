@@ -15,8 +15,8 @@ public class LogEntry extends Model {
     public long date;
     @Column(name = "DateTime")
     public long dateTime;
-    @Column(name = "Location")
-    public Location Location;
+    @Column(name = "location")
+    public Location location;
     @Column(name = "Entered")
     public boolean entered;
 
@@ -27,5 +27,12 @@ public class LogEntry extends Model {
 
     public LogEntry() {
 
+    }
+
+    public LogEntry(DateTime dt, boolean entered, Location location) {
+        date = dt.withMillisOfDay(0).getMillis();
+        this.dateTime = dt.getMillis();
+        this.entered = entered;
+        this.location = location;
     }
 }

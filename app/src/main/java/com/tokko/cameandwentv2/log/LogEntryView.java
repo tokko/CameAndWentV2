@@ -32,8 +32,8 @@ public class LogEntryView extends LinearLayout {
         this.entry = entry;
         action.setText(entry.entered ? "Entered" : "Exited");
         time.setText(entry.dateTime + "");
-        if (entry.Location != null)
-            location.setText(entry.Location.name);
+        if (entry.location != null)
+            location.setText(entry.location.name);
     }
 
     @Click(R.id.delete)
