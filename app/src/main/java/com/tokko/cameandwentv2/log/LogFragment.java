@@ -4,7 +4,6 @@ import android.app.Fragment;
 import android.widget.ListView;
 import android.widget.ToggleButton;
 
-import com.activeandroid.query.Select;
 import com.tokko.cameandwentv2.R;
 import com.tokko.cameandwentv2.dbmodels.LogEntry;
 import com.tokko.cameandwentv2.dbmodels.ResourceAccess;
@@ -40,11 +39,11 @@ public class LogFragment extends Fragment {
 
     @AfterViews
     public void init() {
-        LogEntry le = new Select().from(LogEntry.class).orderBy("date DESC").executeSingle();
+        LogEntry le = resourceAccess.readLatestLogEntry();
         if (le != null)
             clockButton.setChecked(le.entered);
         //setListShown(true);
-        logEntryAdapter.init(new DateTime().getMillis());
+        logEntryAdapter.init(new DateTime());
     }
 
     @AfterViews

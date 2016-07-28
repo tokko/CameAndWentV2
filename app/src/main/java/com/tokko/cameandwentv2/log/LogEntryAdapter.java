@@ -9,6 +9,7 @@ import com.squareup.otto.Subscribe;
 import com.tokko.cameandwentv2.dbmodels.LogEntry;
 import com.tokko.cameandwentv2.dbmodels.ResourceAccess;
 import com.tokko.cameandwentv2.events.EventLogEntryCommited;
+import com.tokko.cameandwentv2.events.EventLogEntryDeleted;
 import com.tokko.cameandwentv2.events.OttoBus;
 
 import org.androidannotations.annotations.AfterInject;
@@ -37,8 +38,8 @@ public class LogEntryAdapter extends BaseAdapter {
 
     private List<LogEntry> list = new ArrayList<>();
 
-    public void init(long date) {
-        list = ra.getLogEntries();
+    public void init(DateTime date) {
+        list = ra.getLogEntries(date);
     }
 
     @AfterInject
@@ -51,10 +52,14 @@ public class LogEntryAdapter extends BaseAdapter {
         notifyDataSetChanged();
     }
 
+    @Subscribe
+    public void onDataSetChanged(EventLogEntryDeleted eventLogEntryDeleted) {
+        notifyDataSetChanged();
+    }
     @Override
     public void notifyDataSetChanged() {
         super.notifyDataSetChanged();
-        init(new DateTime().getMillis());
+        init(new DateTime());
     }
 
     @Override

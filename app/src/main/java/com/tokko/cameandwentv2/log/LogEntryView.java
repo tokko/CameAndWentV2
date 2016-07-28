@@ -6,10 +6,14 @@ import android.widget.TextView;
 
 import com.tokko.cameandwentv2.R;
 import com.tokko.cameandwentv2.dbmodels.LogEntry;
+import com.tokko.cameandwentv2.dbmodels.ResourceAccess;
 
+import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EViewGroup;
 import org.androidannotations.annotations.ViewById;
+
+import java.text.SimpleDateFormat;
 
 /**
  * Created by Andreas on 27/07/2016.
@@ -22,6 +26,9 @@ public class LogEntryView extends LinearLayout {
     TextView time;
     @ViewById
     TextView location;
+    SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
+    @Bean
+    ResourceAccess ra;
     private LogEntry entry;
 
     public LogEntryView(Context context) {
@@ -31,13 +38,13 @@ public class LogEntryView extends LinearLayout {
     public void bind(LogEntry entry) {
         this.entry = entry;
         action.setText(entry.entered ? "Entered" : "Exited");
-        time.setText(entry.dateTime + "");
+        time.setText(sdf.format(entry.dateTime));
         if (entry.location != null)
             location.setText(entry.location.name);
     }
 
     @Click(R.id.delete)
     public void onDeleteClick() {
-        entry.delete();
+        ra.deleteLogEntry(entry);
     }
 }
