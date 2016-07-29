@@ -1,7 +1,7 @@
 package com.tokko.cameandwentv2.log;
 
 import android.app.Fragment;
-import android.widget.ListView;
+import android.widget.ExpandableListView;
 import android.widget.ToggleButton;
 
 import com.tokko.cameandwentv2.R;
@@ -15,7 +15,6 @@ import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EFragment;
 import org.androidannotations.annotations.LongClick;
 import org.androidannotations.annotations.ViewById;
-import org.joda.time.DateTime;
 
 
 /**
@@ -26,10 +25,10 @@ public class LogFragment extends Fragment {
     @ViewById
     public ToggleButton clockButton;
     @ViewById
-    public ListView list;
+    public ExpandableListView list;
 
     @Bean
-    LogEntryAdapter logEntryAdapter;
+    DurationAdapter durationAdapter;
 
     @Bean
     ResourceAccess resourceAccess;
@@ -42,19 +41,17 @@ public class LogFragment extends Fragment {
         LogEntry le = resourceAccess.readLatestLogEntry();
         if (le != null)
             clockButton.setChecked(le.entered);
-        //setListShown(true);
-        logEntryAdapter.init(new DateTime());
     }
 
     @AfterViews
     public void bindAdapters() {
-        list.setAdapter(logEntryAdapter);
+        list.setAdapter(durationAdapter);
     }
 
     @Click(R.id.clockButton)
     public void onClockButtonClick() {
         resourceAccess.CommitLogEntry(timeManager.getCurrentTime(), clockButton.isChecked(), "Leffe");
-        logEntryAdapter.notifyDataSetChanged();
+        durationAdapter.refreshData();
     }
 
     @LongClick(R.id.clockButton)

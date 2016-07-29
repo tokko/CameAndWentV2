@@ -20,14 +20,14 @@ public class ResourceAccess {
     @Bean
     OttoBus bus;
 
-    public List<LogEntry> getLogEntries(DateTime date) {
+    public List<LogEntry> getLogEntries() {
         return new Select().from(LogEntry.class)
                 //.where("Date = ?", date)
                 .orderBy("DateTime ASC").execute();
     }
 
     public void CommitLogEntry(DateTime dt, boolean entered, String locationName) {
-        new LogEntry(dt, entered, (Location) new Select().from(Location.class).where("Name = ?", locationName).executeSingle()).save();
+        new LogEntry(dt, entered, new Select().from(Location.class).where("Name = ?", locationName).executeSingle()).save();
         bus.post(new EventLogEntryCommited(dt, entered));
     }
 

@@ -16,7 +16,6 @@ import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EBean;
 import org.androidannotations.annotations.RootContext;
-import org.joda.time.DateTime;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,8 +37,8 @@ public class LogEntryAdapter extends BaseAdapter {
 
     private List<LogEntry> list = new ArrayList<>();
 
-    public void init(DateTime date) {
-        list = ra.getLogEntries(date);
+    public void init() {
+        list = ra.getLogEntries();
     }
 
     @AfterInject
@@ -59,7 +58,7 @@ public class LogEntryAdapter extends BaseAdapter {
     @Override
     public void notifyDataSetChanged() {
         super.notifyDataSetChanged();
-        init(new DateTime());
+        init();
     }
 
     @Override
