@@ -10,7 +10,7 @@
     <ToggleButton
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/clockbutton"
+        android:id="@+id/clockButton"
         android:textOn="Clockout"
         android:textOff="Clockin" />
 </LinearLayout>
