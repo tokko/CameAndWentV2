@@ -52,4 +52,9 @@ public class LogEntryAdapter extends BaseAdapter {
         entryView.bind(getItem(i));
         return entryView;
     }
+
+    public void clear() {
+        data.clear();
+        notifyDataSetChanged();
+    }
 }
