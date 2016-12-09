@@ -12,7 +12,7 @@ public class CameAndWentApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-        Configuration.Builder config = new Configuration.Builder(this);
-        ActiveAndroid.initialize(config.create());
+        //Configuration.Builder config = new Configuration.Builder(this);
+        //ActiveAndroid.initialize(config.create());
     }
 }
