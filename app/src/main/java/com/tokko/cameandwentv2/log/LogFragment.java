@@ -14,6 +14,7 @@ import com.annimon.stream.Stream;
 import com.tokko.cameandwentv2.R;
 
 import org.androidannotations.annotations.AfterViews;
+import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EFragment;
 import org.androidannotations.annotations.ViewById;
 
@@ -47,6 +48,18 @@ public class LogFragment extends ListFragment{
     public void setAdapter(){
         list.setAdapter(adapter);
         adapter.notifyDataSetChanged();
-       // setListShown(true);
+    }
+
+    @Click(R.id.clockbutton)
+    public void clockButtonClick(){
+        data.add(new LogEntry(System.currentTimeMillis()));
+        refreshData();
+    }
+
+    private void refreshData() {
+        List<String> collect = Stream.of(data).map(x -> x.getTime() + "").collect(Collectors.toList());
+        adapter.clear();
+        adapter.addAll(collect);
+        adapter.notifyDataSetChanged();
     }
 }
