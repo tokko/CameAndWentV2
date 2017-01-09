@@ -9,9 +9,6 @@ import com.tokko.cameandwentv2.R;
 import org.androidannotations.annotations.EViewGroup;
 import org.androidannotations.annotations.ViewById;
 
-/**
- * Created by andre on 9/12/2016.
- */
 @EViewGroup(R.layout.logentry)
 public class LogEntryView extends LinearLayout{
     @ViewById

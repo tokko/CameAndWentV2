@@ -4,17 +4,22 @@ import com.activeandroid.Model;
 import com.activeandroid.annotation.Column;
 import com.activeandroid.annotation.Table;
 
-@Table(name = "LogEntries")
-public class LogEntry extends Model {
-    @Column(name = "Time")
+import org.greenrobot.greendao.annotation.Entity;
+import org.greenrobot.greendao.annotation.Id;
+import org.greenrobot.greendao.annotation.Keep;
+import org.greenrobot.greendao.annotation.Generated;
+
+@Entity
+public class LogEntry {
+    @Id
     public long time;
-    @Column(name = "Entered")
     public boolean entered;
 
     public LogEntry() {
         super();
     }
 
+    @Keep
     public LogEntry(long time, boolean entered) {
         this.time = time;
         this.entered = entered;
@@ -26,5 +31,21 @@ public class LogEntry extends Model {
 
     public boolean isEntered() {
         return entered;
+    }
+
+    public Long getDate(){
+        return Long.valueOf(0); //TODO: implement
+    }
+
+    public void setTime(long time) {
+        this.time = time;
+    }
+
+    public boolean getEntered() {
+        return this.entered;
+    }
+
+    public void setEntered(boolean entered) {
+        this.entered = entered;
     }
 }

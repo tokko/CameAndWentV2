@@ -1,17 +1,16 @@
 package com.tokko.cameandwentv2.log;
 
 import android.app.ListFragment;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ListView;
+import android.widget.ExpandableListView;
 import android.widget.ToggleButton;
 
-import com.activeandroid.query.Select;
-import com.annimon.stream.Stream;
 import com.tokko.cameandwentv2.R;
 import com.tokko.cameandwentv2.events.EventLogEntryAdded;
 import com.tokko.cameandwentv2.events.OttoBus;
@@ -24,6 +23,7 @@ import org.androidannotations.annotations.OptionsItem;
 import org.androidannotations.annotations.OptionsMenu;
 import org.androidannotations.annotations.ViewById;
 
+import java.util.ArrayList;
 import java.util.Collection;
 
 @EFragment(R.layout.logfragment)
@@ -31,7 +31,7 @@ import java.util.Collection;
 public class LogFragment extends ListFragment{
 
     @ViewById
-    ListView list;
+    ExpandableListView list;
     @ViewById
     ToggleButton clockButton;
     @Bean
@@ -39,11 +39,19 @@ public class LogFragment extends ListFragment{
 
     @Bean
     OttoBus bus;
+    private DaoSession daoSession;
+    private LogEntryDao logEntryDao;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
+        DaoMaster.DevOpenHelper helper = new DaoMaster.DevOpenHelper(getActivity(), "cameandwentv2-db", null);
+        SQLiteDatabase db = helper.getWritableDatabase();
+        DaoMaster daoMaster = new DaoMaster(db);
+        daoSession = daoMaster.newSession();
+
+        logEntryDao = daoSession.getLogEntryDao();
     }
 
     @Override
@@ -59,31 +67,30 @@ public class LogFragment extends ListFragment{
 
     @OptionsItem(R.id.action_clear)
     public void purgeDb(){
-        Collection<LogEntry> entries = new Select().from(LogEntry.class).execute();
-        Stream.of(entries).forEach(LogEntry::delete);
+        logEntryDao.deleteAll();
         adapter.clear();
-        adapter.notifyDataSetChanged();
+        //adapter.notifyDataSetChanged();
     }
 
     @Click(R.id.clockButton)
     public void clockButtonClick(){
         LogEntry entry = new LogEntry(System.currentTimeMillis(), clockButton.isChecked());
-        entry.save();
+        logEntryDao.delete(entry);
         bus.post(new EventLogEntryAdded(entry));
-        adapter.add(entry);
+        //adapter.add(entry);
     }
 
     private class EntryLoader extends AsyncTask<Void, Void, Collection<LogEntry>> {
 
         @Override
         protected Collection<LogEntry> doInBackground(Void... voids) {
-            return new Select().from(LogEntry.class).execute();
+            return logEntryDao.loadAll();
         }
 
         @Override
         protected void onPostExecute(Collection<LogEntry> logEntries) {
-            if(adapter != null)
-                adapter.addAll(logEntries);
+        //    if(adapter != null)
+      //          adapter.addAll(logEntries);
         }
     }
 }

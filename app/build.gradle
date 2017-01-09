@@ -2,13 +2,14 @@ apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'com.neenbedankt.android-apt'
 apply plugin: 'me.tatarka.retrolambda'
+apply plugin: 'org.greenrobot.greendao'
 android {
     compileSdkVersion 25
     buildToolsVersion '25.0.0'
 
     defaultConfig {
         applicationId "com.tokko.cameandwentv2"
-        minSdkVersion 23
+        minSdkVersion 24
         targetSdkVersion 25
         versionCode 1
         versionName "1.0"
@@ -27,7 +28,9 @@ android {
         sourceCompatibility 1.8
     }
 }
-
+greendao {
+    schemaVersion 1
+}
 def AAVersion = '4.1.0'
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
@@ -37,11 +40,12 @@ dependencies {
     compile 'com.android.support:appcompat-v7:25.0.1'
     compile 'com.android.support:design:25.0.1'
     compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    compile 'org.greenrobot:greendao:3.2.0'
     //  compile 'org.greenrobot:eventbus:3.0.0'
     compile 'com.michaelpardo:activeandroid:3.1.0-SNAPSHOT'
     provided 'javax.annotation:jsr250-api:1.0'
     compile group: 'joda-time', name: 'joda-time', version: '2.3'
-    compile 'com.annimon:stream:1.1.1'
+   // compile 'com.annimon:stream:1.1.1'
     apt "org.androidannotations:androidannotations:$AAVersion"
     compile "org.androidannotations:androidannotations-api:$AAVersion"
     apt "org.androidannotations:otto:$AAVersion"

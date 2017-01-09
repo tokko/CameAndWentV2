@@ -14,10 +14,12 @@ public class CameAndWentApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+        /*
         Configuration.Builder config = new Configuration.Builder(this);
         config.addModelClass(LogEntry.class);
         config.setDatabaseVersion(6);
         config.setDatabaseName("CameAndWentV2");
         ActiveAndroid.initialize(config.create());
+        */
     }
 }
