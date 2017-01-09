@@ -35,14 +35,16 @@ public class DurationEntryBuilder {
     }
     public List<LogEntry> purgeDoubleToggles(List<LogEntry> entries){
         List<LogEntry> result = new ArrayList<>();
-        List<LogEntry> sortedEntries = entries.stream().sorted((a, b) -> (int) (b.getTime() - a.getTime())).collect(Collectors.toList());
+        List<LogEntry> sortedEntries = entries.stream().sorted((a, b) -> (int) (a.getTime() - b.getTime())).collect(Collectors.toList());
         if(sortedEntries.isEmpty()) return result;
         boolean state = sortedEntries.get(0).entered;
         result.add(sortedEntries.get(0));
         for (int i = 1; i < sortedEntries.size(); i++){
-            if(state == sortedEntries.get(i).entered) continue;
-            state = sortedEntries.get(i).entered;
-            result.add(sortedEntries.get(i));
+            LogEntry currentEntry = sortedEntries.get(i);
+            boolean currentState = currentEntry.entered;
+            if(state == currentState) continue;
+            state = currentState;
+            result.add(currentEntry);
         }
         return result;
     }
