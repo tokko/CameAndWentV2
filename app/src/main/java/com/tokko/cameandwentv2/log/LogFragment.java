@@ -77,7 +77,7 @@ public class LogFragment extends ListFragment{
         LogEntry entry = new LogEntry(System.currentTimeMillis(), clockButton.isChecked());
         logEntryDao.insert(entry);
         bus.post(new EventLogEntryAdded(entry));
-        //adapter.add(entry);
+        adapter.add(entry);
     }
 
     private class EntryLoader extends AsyncTask<Void, Void, Collection<LogEntry>> {
