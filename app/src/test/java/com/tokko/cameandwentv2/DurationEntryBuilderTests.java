@@ -22,7 +22,7 @@ public class DurationEntryBuilderTests {
     public void sumDurations_EnterExit_Correct(){
         List<LogEntry> list = Arrays.asList(new LogEntry(1, true), new LogEntry(2, false));
 
-        long result = new DurationEntryBuilder().sumDurations(list);
+        long result = new DurationEntry(list).getDuration();
         Assert.assertEquals(1, result);
     }
      @Test
@@ -34,7 +34,7 @@ public class DurationEntryBuilderTests {
                 new LogEntry(4, false)
         );
 
-        long result = new DurationEntryBuilder().sumDurations(list);
+        long result = new DurationEntry(list).getDuration();
         Assert.assertEquals(2, result);
     }
 
@@ -45,7 +45,7 @@ public class DurationEntryBuilderTests {
                 new LogEntry(2, true)
         );
 
-        List<LogEntry> result = new DurationEntryBuilder().purgeDoubleToggles(list);
+        List<LogEntry> result = new DurationEntry(null).purgeDoubleToggles(list);
         Assert.assertEquals("There can be only one!", 1, result.size());
         Assert.assertEquals(1, result.get(0).getTime());
     }
@@ -61,7 +61,7 @@ public class DurationEntryBuilderTests {
                 new LogEntry(6, false)
         );
 
-        List<LogEntry> result = new DurationEntryBuilder().purgeDoubleToggles(list);
+        List<LogEntry> result = new DurationEntry(null).purgeDoubleToggles(list);
         Assert.assertEquals("There can be exactly 4", 4, result.size());
         Assert.assertEquals(1, result.get(0).getTime());
         Assert.assertEquals(3, result.get(1).getTime());

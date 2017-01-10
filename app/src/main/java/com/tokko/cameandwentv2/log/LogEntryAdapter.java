@@ -28,6 +28,7 @@ public class LogEntryAdapter implements ExpandableListAdapter {
     }
 
     public void add(DurationEntry entry){
+
         data.add(entry);
         //notifyDataSetChanged();
     }
