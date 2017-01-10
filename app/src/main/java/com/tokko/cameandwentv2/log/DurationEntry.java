@@ -1,5 +1,7 @@
 package com.tokko.cameandwentv2.log;
 
+import android.util.Log;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -23,6 +25,13 @@ public class DurationEntry {
 
     public List<LogEntry> getLogEntries() {
         return logEntries;
+    }
+
+    public void addEntries(List<LogEntry> entries){
+        logEntries.addAll(entries);
+    }
+    public void addEntry(LogEntry entry){
+        logEntries.add(entry);
     }
 
     public long sumDurations(List<LogEntry> entries){

@@ -4,17 +4,14 @@ import android.content.Context;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.tokko.cameandwentv2.R;
-
 import org.androidannotations.annotations.EViewGroup;
 import org.androidannotations.annotations.ViewById;
-import org.w3c.dom.Text;
 
 @EViewGroup(android.R.layout.simple_expandable_list_item_2)
 public class DurationView extends LinearLayout {
-    @ViewById
+    @ViewById(android.R.id.text1)
     public TextView text1;
-    @ViewById
+    @ViewById(android.R.id.text2)
     public TextView text2;
 
     public DurationView(Context context) {

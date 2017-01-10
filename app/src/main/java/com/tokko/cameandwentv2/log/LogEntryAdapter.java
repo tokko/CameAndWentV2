@@ -7,35 +7,49 @@ import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.BaseExpandableListAdapter;
 import android.widget.ExpandableListAdapter;
 
+import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EBean;
 import org.androidannotations.annotations.RootContext;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Optional;
 
 @EBean
-public class LogEntryAdapter implements ExpandableListAdapter {
+public class LogEntryAdapter extends BaseExpandableListAdapter {
     private ArrayList<DurationEntry> data = new ArrayList<>();
     private ArrayList<DataSetObserver> observers = new ArrayList<>();
+
     @RootContext
     Context context;
 
-    public void addAll(Collection<DurationEntry> entries){
-        data.addAll(entries);
-        //notifyDataSetChanged();
+    public void addAll(Collection<LogEntry> entries){
+        entries.forEach(x -> {
+                    Optional<DurationEntry> existing = data.stream().filter(y -> y.getDate() == x.getDate()).findFirst();
+                    if (existing.isPresent())
+                        existing.get().addEntry(x);
+                    else
+                        data.add(new DurationEntry(new ArrayList<LogEntry>() {{
+                            add(x);
+                        }}));
+                }
+        );
+        observers.forEach(DataSetObserver::onChanged);
     }
 
-    public void add(DurationEntry entry){
-
-        data.add(entry);
-        //notifyDataSetChanged();
+    public void add(LogEntry entry){
+        addAll(new ArrayList<LogEntry>(){{add(entry);}});
+        observers.forEach(DataSetObserver::onChanged);
+        notifyDataSetChanged();
     }
 
     public void clear() {
         data.clear();
-       // notifyDataSetChanged();
+        observers.forEach(DataSetObserver::onChanged);
+        notifyDataSetChanged();
     }
 
     @Override

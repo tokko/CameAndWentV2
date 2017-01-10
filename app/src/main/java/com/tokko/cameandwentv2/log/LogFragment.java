@@ -75,7 +75,7 @@ public class LogFragment extends ListFragment{
     @Click(R.id.clockButton)
     public void clockButtonClick(){
         LogEntry entry = new LogEntry(System.currentTimeMillis(), clockButton.isChecked());
-        logEntryDao.delete(entry);
+        logEntryDao.insert(entry);
         bus.post(new EventLogEntryAdded(entry));
         //adapter.add(entry);
     }
@@ -89,8 +89,8 @@ public class LogFragment extends ListFragment{
 
         @Override
         protected void onPostExecute(Collection<LogEntry> logEntries) {
-        //    if(adapter != null)
-      //          adapter.addAll(logEntries);
+            if(adapter != null)
+                adapter.addAll(logEntries);
         }
     }
 }
