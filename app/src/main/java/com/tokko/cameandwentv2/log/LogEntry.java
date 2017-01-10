@@ -34,7 +34,7 @@ public class LogEntry {
     }
 
     public Long getDate(){
-        return Long.valueOf(0); //TODO: implement
+        return time - (time % (1000 * 60 * 60 * 24));
     }
 
     public void setTime(long time) {
