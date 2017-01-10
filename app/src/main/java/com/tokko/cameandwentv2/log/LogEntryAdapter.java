@@ -37,19 +37,32 @@ public class LogEntryAdapter extends BaseExpandableListAdapter {
                         }}));
                 }
         );
-        observers.forEach(DataSetObserver::onChanged);
+        notifyChange();
     }
 
     public void add(LogEntry entry){
         addAll(new ArrayList<LogEntry>(){{add(entry);}});
+        notifyChange();
+
+    }
+
+    public void delete(LogEntry entry) {
+        Optional<DurationEntry> existingDuration = data.stream().filter(x -> x.getDate() == entry.getDate()).findFirst();
+        if(existingDuration.isPresent())
+            existingDuration.get().getLogEntries().remove(entry);
+        if(existingDuration.get().getLogEntries().isEmpty())
+            data.remove(existingDuration.get());
+        notifyChange();
+    }
+
+    private void notifyChange() {
         observers.forEach(DataSetObserver::onChanged);
         notifyDataSetChanged();
     }
 
     public void clear() {
         data.clear();
-        observers.forEach(DataSetObserver::onChanged);
-        notifyDataSetChanged();
+       notifyChange();
     }
 
     @Override
@@ -149,4 +162,5 @@ public class LogEntryAdapter extends BaseExpandableListAdapter {
     public long getCombinedGroupId(long l) {
         return l;
     }
+
 }

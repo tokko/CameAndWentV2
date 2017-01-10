@@ -11,10 +11,13 @@ import android.view.ViewGroup;
 import android.widget.ExpandableListView;
 import android.widget.ToggleButton;
 
+import com.squareup.otto.Subscribe;
 import com.tokko.cameandwentv2.R;
+import com.tokko.cameandwentv2.events.EventLogDeleted;
 import com.tokko.cameandwentv2.events.EventLogEntryAdded;
 import com.tokko.cameandwentv2.events.OttoBus;
 
+import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.Click;
@@ -59,6 +62,10 @@ public class LogFragment extends ListFragment{
         return null;
     }
 
+    @AfterInject
+    public void initBus(){
+        bus.register(this);
+    }
     @AfterViews
     public void setAdapter(){
         list.setAdapter(adapter);
@@ -70,6 +77,12 @@ public class LogFragment extends ListFragment{
         logEntryDao.deleteAll();
         adapter.clear();
         //adapter.notifyDataSetChanged();
+    }
+
+    @Subscribe
+    public void deleteLogEntry(EventLogDeleted entry){
+        logEntryDao.delete(entry.getEntry());
+        adapter.delete(entry.getEntry());
     }
 
     @Click(R.id.clockButton)
