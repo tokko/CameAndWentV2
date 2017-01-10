@@ -6,7 +6,6 @@ import android.widget.TextView;
 
 import org.androidannotations.annotations.EViewGroup;
 import org.androidannotations.annotations.ViewById;
-import org.joda.time.Interval;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
