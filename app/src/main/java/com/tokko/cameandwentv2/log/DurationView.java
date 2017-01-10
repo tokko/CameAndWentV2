@@ -7,19 +7,23 @@ import android.widget.TextView;
 import org.androidannotations.annotations.EViewGroup;
 import org.androidannotations.annotations.ViewById;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 @EViewGroup(android.R.layout.simple_expandable_list_item_2)
 public class DurationView extends LinearLayout {
     @ViewById(android.R.id.text1)
-    public TextView text1;
+    public TextView date;
     @ViewById(android.R.id.text2)
-    public TextView text2;
-
+    public TextView duration;
+    private final SimpleDateFormat durationFormatter = new SimpleDateFormat("hh:MM");
+    private final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-mm-dd");
     public DurationView(Context context) {
         super(context);
     }
 
     public void bind(DurationEntry entry){
-        text1.setText(entry.getDate()+"");
-        text2.setText(entry.getDuration()+"");
+        date.setText(dateFormat.format(new Date(entry.getDate())));
+        duration.setText(durationFormatter.format(new Date(entry.getDuration())));
     }
 }
