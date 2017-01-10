@@ -6,9 +6,11 @@ import android.widget.TextView;
 
 import org.androidannotations.annotations.EViewGroup;
 import org.androidannotations.annotations.ViewById;
+import org.joda.time.Interval;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.concurrent.TimeUnit;
 
 @EViewGroup(android.R.layout.simple_expandable_list_item_2)
 public class DurationView extends LinearLayout {
@@ -16,14 +18,17 @@ public class DurationView extends LinearLayout {
     public TextView date;
     @ViewById(android.R.id.text2)
     public TextView duration;
-    private final SimpleDateFormat durationFormatter = new SimpleDateFormat("HH:MM");
     private final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-mm-dd");
     public DurationView(Context context) {
         super(context);
     }
 
     public void bind(DurationEntry entry){
+        long hours = TimeUnit.MILLISECONDS.toHours(entry.getDuration());
+        long minutes = TimeUnit.MILLISECONDS.toMinutes(entry.getDuration() - TimeUnit.HOURS.toMillis(hours));
+        long seconds = TimeUnit.MILLISECONDS.toSeconds(entry.getDuration() - TimeUnit.HOURS.toMillis(hours) - TimeUnit.MINUTES.toMillis(minutes));
+        String durationString = String.format("%02d:%02d:%02d", hours, minutes, seconds);
         date.setText(dateFormat.format(new Date(entry.getDate())));
-        duration.setText(durationFormatter.format(new Date(entry.getDuration())));
+        duration.setText(durationString);
     }
 }

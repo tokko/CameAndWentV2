@@ -35,7 +35,7 @@ public class DurationEntry {
     }
 
     public long sumDurations(List<LogEntry> entries){
-        return abs(entries.stream().map(x -> x.getTime() * (x.entered ? -1 : 1)).collect(Collectors.summingLong(Long::valueOf)));
+        return abs(entries.stream().map(x -> x.getTime() * (x.entered ? 1 : -1)).collect(Collectors.summingLong(Long::valueOf)));
     }
 
     private long abs(long l){
