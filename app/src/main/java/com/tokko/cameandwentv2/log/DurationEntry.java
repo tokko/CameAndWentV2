@@ -3,6 +3,8 @@ package com.tokko.cameandwentv2.log;
 import android.content.Context;
 import android.util.Log;
 
+import com.tokko.cameandwentv2.dagger.DaggerDurationEntryComponent;
+import com.tokko.cameandwentv2.dagger.DurationEntryComponent;
 import com.tokko.cameandwentv2.utils.TimeUtils;
 
 
@@ -11,13 +13,19 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import javax.inject.Inject;
+
+
 public class DurationEntry {
 
     private  List<LogEntry> logEntries;
-    private TimeUtils timeUtils = new TimeUtils();
+
+    @Inject
+    public TimeUtils timeUtils;
 
     public DurationEntry(List<LogEntry> logEntries) {
         this.logEntries = logEntries;
+        DaggerDurationEntryComponent.builder().build().inject(this);
     }
 
     public long getDuration() {
