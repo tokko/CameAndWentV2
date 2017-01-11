@@ -50,7 +50,7 @@ public class LogEntryRepository {
     }
 
     public List<LogEntry> readAll() {
-        return logEntryDao.loadAll();
+        return purgeDoubleToggles(logEntryDao.loadAll());
     }
 
     public void deleteAll() {
