@@ -1,17 +1,12 @@
 package com.tokko.cameandwentv2.resourceaccess;
 
 import android.content.Context;
-import android.database.sqlite.SQLiteDatabase;
 
 import com.tokko.cameandwentv2.events.EventLogEntryAdded;
 import com.tokko.cameandwentv2.events.EventLogEntryDeleted;
-import com.tokko.cameandwentv2.events.OttoBus;
-import com.tokko.cameandwentv2.log.DaoMaster;
-import com.tokko.cameandwentv2.log.DaoSession;
 import com.tokko.cameandwentv2.log.LogEntry;
 import com.tokko.cameandwentv2.log.LogEntryDao;
 
-import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EBean;
 
 import java.util.ArrayList;
@@ -21,22 +16,13 @@ import java.util.stream.Collectors;
 import javax.inject.Inject;
 
 @EBean
-public class LogEntryRepository {
+public class LogEntryRepository extends BaseRepository {
 
-    private DaoSession daoSession;
     private LogEntryDao logEntryDao;
-
-    @Bean
-    public OttoBus bus;
 
     @Inject
     public LogEntryRepository(Context context) {
-        if(context == null) return;
-        DaoMaster.DevOpenHelper helper = new DaoMaster.DevOpenHelper(context, "cameandwentv2-db", null);
-        SQLiteDatabase db = helper.getWritableDatabase();
-        DaoMaster daoMaster = new DaoMaster(db);
-        daoSession = daoMaster.newSession();
-
+        super(context);
         logEntryDao = daoSession.getLogEntryDao();
     }
 
