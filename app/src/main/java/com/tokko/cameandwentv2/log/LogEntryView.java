@@ -1,13 +1,11 @@
 package com.tokko.cameandwentv2.log;
 
 import android.content.Context;
-import android.view.View;
-import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.tokko.cameandwentv2.R;
-import com.tokko.cameandwentv2.events.EventLogDeleted;
+import com.tokko.cameandwentv2.events.EventLogEntryDeleted;
 import com.tokko.cameandwentv2.events.OttoBus;
 
 import org.androidannotations.annotations.Bean;
@@ -43,6 +41,6 @@ public class LogEntryView extends LinearLayout{
     @Click(R.id.delete)
     public void delete(){
        // setVisibility(View.GONE);
-        bus.post(new EventLogDeleted(entry));
+        bus.post(new EventLogEntryDeleted(entry));
     }
 }

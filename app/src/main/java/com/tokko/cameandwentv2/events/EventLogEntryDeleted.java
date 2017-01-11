@@ -6,11 +6,11 @@ import com.tokko.cameandwentv2.log.LogEntry;
  * Created by andre on 10/01/2017.
  */
 
-public class EventLogDeleted {
+public class EventLogEntryDeleted {
 
     private LogEntry entry;
 
-    public EventLogDeleted(LogEntry entry) {
+    public EventLogEntryDeleted(LogEntry entry) {
         this.entry = entry;
     }
 

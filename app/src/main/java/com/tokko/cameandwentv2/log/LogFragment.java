@@ -13,7 +13,7 @@ import android.widget.ToggleButton;
 
 import com.squareup.otto.Subscribe;
 import com.tokko.cameandwentv2.R;
-import com.tokko.cameandwentv2.events.EventLogDeleted;
+import com.tokko.cameandwentv2.events.EventLogEntryDeleted;
 import com.tokko.cameandwentv2.events.EventLogEntryAdded;
 import com.tokko.cameandwentv2.events.OttoBus;
 
@@ -26,7 +26,6 @@ import org.androidannotations.annotations.OptionsItem;
 import org.androidannotations.annotations.OptionsMenu;
 import org.androidannotations.annotations.ViewById;
 
-import java.util.ArrayList;
 import java.util.Collection;
 
 @EFragment(R.layout.logfragment)
@@ -80,7 +79,7 @@ public class LogFragment extends ListFragment{
     }
 
     @Subscribe
-    public void deleteLogEntry(EventLogDeleted entry){
+    public void deleteLogEntry(EventLogEntryDeleted entry){
         logEntryDao.delete(entry.getEntry());
         adapter.delete(entry.getEntry());
     }
