@@ -4,8 +4,7 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.widget.Toolbar;
 
-import com.tokko.cameandwentv2.log.LogFragment_;
-import com.tokko.cameandwentv2.project.ProjectFragment_;
+import com.tokko.cameandwentv2.project.ProjectListFragment_;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.EActivity;
@@ -19,7 +18,7 @@ public class MainActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        getFragmentManager().beginTransaction().replace(R.id.mainlayout, new ProjectFragment_()).commit();
+        getFragmentManager().beginTransaction().replace(R.id.mainlayout, new ProjectListFragment_()).commit();
     }
 
     @AfterViews

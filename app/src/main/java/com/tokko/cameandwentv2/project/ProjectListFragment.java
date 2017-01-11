@@ -1,6 +1,7 @@
 package com.tokko.cameandwentv2.project;
 
 
+import android.app.FragmentManager;
 import android.app.ListFragment;
 import android.media.projection.MediaProjection;
 import android.os.AsyncTask;
@@ -27,7 +28,7 @@ import java.util.UUID;
 
 @EFragment
 @OptionsMenu(R.menu.menu_project)
-public class ProjectFragment extends ListFragment{
+public class ProjectListFragment extends ListFragment{
 
     @ViewById
     ListView list;
@@ -59,7 +60,7 @@ public class ProjectFragment extends ListFragment{
 
     @OptionsItem(R.id.addProject)
     public void addProject(){
-        projectRepository.insert(new Project(UUID.randomUUID().toString(), 0, 0));
+        new ProjectDialogFragment_().show(getFragmentManager(), "sometag");
     }
     @Override
     public void onResume() {
@@ -85,6 +86,8 @@ public class ProjectFragment extends ListFragment{
             super.onPostExecute(projects);
             adapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_1, android.R.id.text1, projects);
             setListAdapter(adapter);
+            if(adapter.isEmpty())
+                new ProjectDialogFragment_().show(getFragmentManager(), "sometag");
         }
     }
 }
