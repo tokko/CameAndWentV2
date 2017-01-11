@@ -25,7 +25,7 @@ public class LogEntryView extends LinearLayout{
     @Bean
     OttoBus bus;
 
-    private SimpleDateFormat timeFormat = new SimpleDateFormat("HH:MM");
+    private SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm");
     private LogEntry entry;
 
     public LogEntryView(Context context) {

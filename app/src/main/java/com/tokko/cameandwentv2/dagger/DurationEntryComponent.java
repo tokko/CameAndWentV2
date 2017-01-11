@@ -7,7 +7,7 @@ import javax.inject.Singleton;
 import dagger.Component;
 
 @Singleton
-@Component(modules = {TimeUtilModule.class})
+@Component(modules = {TimeUtilModule.class, OttoBusModule.class})
 public interface DurationEntryComponent {
     void inject(DurationEntry entry);
 }

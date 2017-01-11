@@ -1,10 +1,8 @@
 package com.tokko.cameandwentv2.log;
 
-import android.content.Context;
-import android.util.Log;
-
 import com.tokko.cameandwentv2.dagger.DaggerDurationEntryComponent;
-import com.tokko.cameandwentv2.dagger.DurationEntryComponent;
+import com.tokko.cameandwentv2.events.EventLogEntryDeleted;
+import com.tokko.cameandwentv2.events.OttoBus;
 import com.tokko.cameandwentv2.utils.TimeUtils;
 
 
@@ -22,6 +20,9 @@ public class DurationEntry {
 
     @Inject
     public TimeUtils timeUtils;
+
+    @Inject
+    public OttoBus bus;
 
     public DurationEntry(List<LogEntry> logEntries) {
         this.logEntries = logEntries;
@@ -45,6 +46,7 @@ public class DurationEntry {
     }
 
     public long sumDurations(List<LogEntry> entries){
+        entries = purgeDoubleToggles(entries);
         if(entries.size() == 1){
             return timeUtils.getCurrentTime() - entries.get(0).getTime();
         }
@@ -71,7 +73,10 @@ public class DurationEntry {
         for (int i = 1; i < sortedEntries.size(); i++){
             LogEntry currentEntry = sortedEntries.get(i);
             boolean currentState = currentEntry.entered;
-            if(state == currentState) continue;
+            if(state == currentState){
+                bus.post(new EventLogEntryDeleted(currentEntry));
+                continue;
+            }
             state = currentState;
             result.add(currentEntry);
         }

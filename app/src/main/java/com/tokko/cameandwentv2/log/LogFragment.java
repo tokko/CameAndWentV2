@@ -1,7 +1,6 @@
 package com.tokko.cameandwentv2.log;
 
 import android.app.ListFragment;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -16,6 +15,7 @@ import com.tokko.cameandwentv2.R;
 import com.tokko.cameandwentv2.events.EventLogEntryDeleted;
 import com.tokko.cameandwentv2.events.EventLogEntryAdded;
 import com.tokko.cameandwentv2.events.OttoBus;
+import com.tokko.cameandwentv2.resourceaccess.LogEntryRepository;
 
 import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.AfterViews;
@@ -43,19 +43,14 @@ public class LogFragment extends ListFragment{
 
     @Bean
     OttoBus bus;
-    private DaoSession daoSession;
-    private LogEntryDao logEntryDao;
+    @Bean
+    LogEntryRepository logEntryRepo;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
-        DaoMaster.DevOpenHelper helper = new DaoMaster.DevOpenHelper(getActivity(), "cameandwentv2-db", null);
-        SQLiteDatabase db = helper.getWritableDatabase();
-        DaoMaster daoMaster = new DaoMaster(db);
-        daoSession = daoMaster.newSession();
 
-        logEntryDao = daoSession.getLogEntryDao();
     }
 
     @Override
@@ -68,15 +63,16 @@ public class LogFragment extends ListFragment{
         bus.register(this);
     }
 
-    @AfterViews
-    public void setAdapter(){
+    @Override
+    public void onResume() {
+        super.onResume();
         list.setAdapter(adapter);
         new EntryLoader().execute();
     }
 
     @AfterViews
     public void setStatusOfClockButton(){
-        List<LogEntry> entries = logEntryDao.loadAll();
+        List<LogEntry> entries = logEntryRepo.readAll();
         Optional<Long> maxTime = entries.stream().map(LogEntry::getTime).max((a, b) -> (int)(a - b));
         if(maxTime.isPresent()){
             Optional<LogEntry> maxEntry = entries.stream().filter(x -> x.getTime() == maxTime.get()).findFirst();
@@ -85,20 +81,20 @@ public class LogFragment extends ListFragment{
     }
     @OptionsItem(R.id.action_clear)
     public void purgeDb(){
-        logEntryDao.deleteAll();
+        logEntryRepo.deleteAll();
         adapter.clear();
     }
 
     @Subscribe
     public void deleteLogEntry(EventLogEntryDeleted entry){
-        logEntryDao.delete(entry.getEntry());
+        logEntryRepo.deleteLogEntry(entry.getEntry());
         adapter.delete(entry.getEntry());
     }
 
     @Click(R.id.clockButton)
     public void clockButtonClick(){
         LogEntry entry = new LogEntry(System.currentTimeMillis(), clockButton.isChecked());
-        logEntryDao.insert(entry);
+        logEntryRepo.insertLogEntry(entry);
         bus.post(new EventLogEntryAdded(entry));
         adapter.add(entry);
     }
@@ -107,7 +103,7 @@ public class LogFragment extends ListFragment{
 
         @Override
         protected Collection<LogEntry> doInBackground(Void... voids) {
-            return logEntryDao.loadAll();
+            return logEntryRepo.readAll();
         }
 
         @Override
