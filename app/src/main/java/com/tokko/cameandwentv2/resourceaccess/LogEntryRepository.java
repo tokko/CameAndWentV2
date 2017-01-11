@@ -29,6 +29,7 @@ public class LogEntryRepository {
     @Bean
     public OttoBus bus;
 
+    @Inject
     public LogEntryRepository(Context context) {
         if(context == null) return;
         DaoMaster.DevOpenHelper helper = new DaoMaster.DevOpenHelper(context, "cameandwentv2-db", null);

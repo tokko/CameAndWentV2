@@ -5,8 +5,10 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.tokko.cameandwentv2.R;
+import com.tokko.cameandwentv2.dagger.DaggerLogEntryComponent;
 import com.tokko.cameandwentv2.events.EventLogEntryDeleted;
 import com.tokko.cameandwentv2.events.OttoBus;
+import com.tokko.cameandwentv2.resourceaccess.LogEntryRepository;
 
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.Click;
@@ -15,6 +17,8 @@ import org.androidannotations.annotations.ViewById;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+
+import javax.inject.Inject;
 
 @EViewGroup(R.layout.logentry)
 public class LogEntryView extends LinearLayout{
@@ -27,7 +31,8 @@ public class LogEntryView extends LinearLayout{
 
     private SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm");
     private LogEntry entry;
-
+    @Bean
+    LogEntryRepository logEntryRepository;
     public LogEntryView(Context context) {
         super(context);
     }
@@ -41,6 +46,7 @@ public class LogEntryView extends LinearLayout{
     @Click(R.id.delete)
     public void delete(){
        // setVisibility(View.GONE);
-        bus.post(new EventLogEntryDeleted(entry));
+       //
+        logEntryRepository.deleteLogEntry(entry);
     }
 }

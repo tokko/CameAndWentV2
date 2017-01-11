@@ -96,11 +96,13 @@ public class LogFragment extends ListFragment{
     @Subscribe
     public void deleteLogEntry(EventLogEntryDeleted entry){
         adapter.delete(entry.getEntry());
+        setStatusOfClockButton();
     }
 
     @Subscribe
     public void addLogEntry(EventLogEntryAdded entryAdded){
         adapter.add(entryAdded.getEntry());
+        setStatusOfClockButton();
     }
 
     @Click(R.id.clockButton)

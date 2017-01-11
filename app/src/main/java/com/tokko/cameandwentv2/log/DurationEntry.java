@@ -3,6 +3,7 @@ package com.tokko.cameandwentv2.log;
 import com.tokko.cameandwentv2.dagger.DaggerDurationEntryComponent;
 import com.tokko.cameandwentv2.events.EventLogEntryDeleted;
 import com.tokko.cameandwentv2.events.OttoBus;
+import com.tokko.cameandwentv2.resourceaccess.LogEntryRepository;
 import com.tokko.cameandwentv2.utils.TimeUtils;
 
 
