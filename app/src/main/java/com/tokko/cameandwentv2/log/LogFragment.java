@@ -16,6 +16,7 @@ import com.tokko.cameandwentv2.dagger.DaggerDurationEntryComponent;
 import com.tokko.cameandwentv2.dagger.DaggerLogFragmentComponent;
 import com.tokko.cameandwentv2.events.EventLogEntryDeleted;
 import com.tokko.cameandwentv2.events.EventLogEntryAdded;
+import com.tokko.cameandwentv2.events.EventMinuteTicked;
 import com.tokko.cameandwentv2.events.OttoBus;
 import com.tokko.cameandwentv2.resourceaccess.LogEntryRepository;
 import com.tokko.cameandwentv2.utils.TimeUtils;
@@ -28,10 +29,14 @@ import org.androidannotations.annotations.EFragment;
 import org.androidannotations.annotations.OptionsItem;
 import org.androidannotations.annotations.OptionsMenu;
 import org.androidannotations.annotations.ViewById;
+import org.joda.time.DateTime;
+import org.joda.time.MutableDateTime;
 
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import javax.inject.Inject;
 
@@ -53,6 +58,7 @@ public class LogFragment extends ListFragment{
 
     @Inject
     TimeUtils timeUtils;
+    Timer timer;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -69,6 +75,33 @@ public class LogFragment extends ListFragment{
     @AfterInject
     public void initBus(){
         bus.register(this);
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        timer = new Timer();
+        timer.scheduleAtFixedRate(new TimerTask() {
+            @Override
+            public void run() {
+                getActivity().runOnUiThread(() -> bus.post(new EventMinuteTicked()));
+            }
+        }, 0, 1000);
+    }
+
+    private long getCurrentMinute() {
+        MutableDateTime dt = new MutableDateTime(timeUtils.getCurrentTime());
+        DateTime dt1 = new DateTime(timeUtils.getCurrentTime());
+        dt.setSecondOfMinute(0);
+        dt.setMillisOfSecond(0);
+        dt.addMinutes(1);
+        return dt.getMillis() - dt1.getMillis();
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        timer.cancel();
     }
 
     @Override
