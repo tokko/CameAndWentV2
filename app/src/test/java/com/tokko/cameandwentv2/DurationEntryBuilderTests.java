@@ -39,19 +39,7 @@ public class DurationEntryBuilderTests {
         Assert.assertEquals(2, result);
     }
 
-    @Test
-    public void purgeDoubleToggles_PurgesToggles(){
-        List<LogEntry> list = Arrays.asList(
-                new LogEntry(1, true),
-                new LogEntry(2, true)
-        );
-
-        List<LogEntry> result = new DurationEntry(null).purgeDoubleToggles(list);
-        Assert.assertEquals("There can be only one!", 1, result.size());
-        Assert.assertEquals(1, result.get(0).getTime());
-    }
-
-    @Test
+  @Test
     public void clockedIn_OnlyOneLogEntryForToday_ShowsCurrentDuration(){
         List<LogEntry> list = Arrays.asList(
                 new LogEntry(1, true)
@@ -75,26 +63,7 @@ public class DurationEntryBuilderTests {
         Assert.assertEquals(2, result);
     }
 
-    @Test
-    public void purgeDoubleToggles_PurgesToggles_ManyEntries(){
-        List<LogEntry> list = Arrays.asList(
-                new LogEntry(1, true),
-                new LogEntry(2, true),
-                new LogEntry(3, false),
-                new LogEntry(4, false),
-                new LogEntry(5, true),
-                new LogEntry(6, false)
-        );
-
-        List<LogEntry> result = new DurationEntry(null).purgeDoubleToggles(list);
-        Assert.assertEquals("There can be exactly 4", 4, result.size());
-        Assert.assertEquals(1, result.get(0).getTime());
-        Assert.assertEquals(3, result.get(1).getTime());
-        Assert.assertEquals(5, result.get(2).getTime());
-        Assert.assertEquals(6, result.get(3).getTime());
-    }
-
-    @Test
+   @Test
     public void calculateDurations_CalculatesCorrectly(){
         DateTime dt = new DateTime(2016, 2, 5, 13, 15);
         DateTime tomorrow = dt.plusDays(1);

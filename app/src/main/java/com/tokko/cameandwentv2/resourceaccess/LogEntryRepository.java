@@ -14,18 +14,23 @@ import com.tokko.cameandwentv2.log.LogEntryDao;
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EBean;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
+
+import javax.inject.Inject;
 
 @EBean
 public class LogEntryRepository {
 
-    private final DaoSession daoSession;
-    private final LogEntryDao logEntryDao;
+    private DaoSession daoSession;
+    private LogEntryDao logEntryDao;
 
     @Bean
     public OttoBus bus;
 
     public LogEntryRepository(Context context) {
+        if(context == null) return;
         DaoMaster.DevOpenHelper helper = new DaoMaster.DevOpenHelper(context, "cameandwentv2-db", null);
         SQLiteDatabase db = helper.getWritableDatabase();
         DaoMaster daoMaster = new DaoMaster(db);
@@ -50,5 +55,24 @@ public class LogEntryRepository {
 
     public void deleteAll() {
         logEntryDao.deleteAll();
+    }
+
+    public List<LogEntry> purgeDoubleToggles(List<LogEntry> entries){
+        List<LogEntry> result = new ArrayList<>();
+        List<LogEntry> sortedEntries = entries.stream().sorted((a, b) -> (int) (a.getTime() - b.getTime())).collect(Collectors.toList());
+        if(sortedEntries.isEmpty()) return result;
+        boolean state = sortedEntries.get(0).entered;
+        result.add(sortedEntries.get(0));
+        for (int i = 1; i < sortedEntries.size(); i++){
+            LogEntry currentEntry = sortedEntries.get(i);
+            boolean currentState = currentEntry.entered;
+            if(state == currentState){
+                if(bus != null) bus.post(new EventLogEntryDeleted(currentEntry));
+                continue;
+            }
+            state = currentState;
+            result.add(currentEntry);
+        }
+        return result;
     }
 }

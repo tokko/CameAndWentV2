@@ -46,7 +46,6 @@ public class DurationEntry {
     }
 
     public long sumDurations(List<LogEntry> entries){
-        entries = purgeDoubleToggles(entries);
         if(entries.size() == 1){
             return timeUtils.getCurrentTime() - entries.get(0).getTime();
         }
@@ -64,22 +63,5 @@ public class DurationEntry {
     private long abs(long l){
         return l < 0 ? -l : l;
     }
-    public List<LogEntry> purgeDoubleToggles(List<LogEntry> entries){
-        List<LogEntry> result = new ArrayList<>();
-        List<LogEntry> sortedEntries = entries.stream().sorted((a, b) -> (int) (a.getTime() - b.getTime())).collect(Collectors.toList());
-        if(sortedEntries.isEmpty()) return result;
-        boolean state = sortedEntries.get(0).entered;
-        result.add(sortedEntries.get(0));
-        for (int i = 1; i < sortedEntries.size(); i++){
-            LogEntry currentEntry = sortedEntries.get(i);
-            boolean currentState = currentEntry.entered;
-            if(state == currentState){
-                bus.post(new EventLogEntryDeleted(currentEntry));
-                continue;
-            }
-            state = currentState;
-            result.add(currentEntry);
-        }
-        return result;
-    }
+
 }
