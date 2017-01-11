@@ -75,7 +75,6 @@ public class LogFragment extends ListFragment{
     public void purgeDb(){
         logEntryDao.deleteAll();
         adapter.clear();
-        //adapter.notifyDataSetChanged();
     }
 
     @Subscribe

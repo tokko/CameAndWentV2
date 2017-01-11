@@ -4,6 +4,7 @@ import com.activeandroid.ActiveAndroid;
 import com.tokko.cameandwentv2.log.DurationEntry;
 import com.tokko.cameandwentv2.log.DurationEntryBuilder;
 import com.tokko.cameandwentv2.log.LogEntry;
+import com.tokko.cameandwentv2.utils.TimeUtils;
 
 import junit.framework.Assert;
 
@@ -48,6 +49,30 @@ public class DurationEntryBuilderTests {
         List<LogEntry> result = new DurationEntry(null).purgeDoubleToggles(list);
         Assert.assertEquals("There can be only one!", 1, result.size());
         Assert.assertEquals(1, result.get(0).getTime());
+    }
+
+    @Test
+    public void clockedIn_OnlyOneLogEntryForToday_ShowsCurrentDuration(){
+        List<LogEntry> list = Arrays.asList(
+                new LogEntry(1, true)
+        );
+        TimeUtils.currentTime = 2;
+
+        long result = new DurationEntry(null).sumDurations(list);
+        Assert.assertEquals(1, result);
+    }
+
+    @Test
+    public void clockedIn_MoreClockEntriesForToday_ShowsCurrentDuration(){
+        List<LogEntry> list = Arrays.asList(
+                new LogEntry(1, true),
+                new LogEntry(2, false),
+                new LogEntry(3, true)
+        );
+        TimeUtils.currentTime = 4;
+
+        long result = new DurationEntry(null).sumDurations(list);
+        Assert.assertEquals(2, result);
     }
 
     @Test
