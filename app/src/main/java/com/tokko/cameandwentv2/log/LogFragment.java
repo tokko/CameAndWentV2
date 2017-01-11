@@ -27,6 +27,8 @@ import org.androidannotations.annotations.OptionsMenu;
 import org.androidannotations.annotations.ViewById;
 
 import java.util.Collection;
+import java.util.List;
+import java.util.Optional;
 
 @EFragment(R.layout.logfragment)
 @OptionsMenu(R.menu.menu_main)
@@ -65,12 +67,22 @@ public class LogFragment extends ListFragment{
     public void initBus(){
         bus.register(this);
     }
+
     @AfterViews
     public void setAdapter(){
         list.setAdapter(adapter);
         new EntryLoader().execute();
     }
 
+    @AfterViews
+    public void setStatusOfClockButton(){
+        List<LogEntry> entries = logEntryDao.loadAll();
+        Optional<Long> maxTime = entries.stream().map(LogEntry::getTime).max((a, b) -> (int)(a - b));
+        if(maxTime.isPresent()){
+            Optional<LogEntry> maxEntry = entries.stream().filter(x -> x.getTime() == maxTime.get()).findFirst();
+            clockButton.setChecked(maxEntry.get().entered);
+        }
+    }
     @OptionsItem(R.id.action_clear)
     public void purgeDb(){
         logEntryDao.deleteAll();
