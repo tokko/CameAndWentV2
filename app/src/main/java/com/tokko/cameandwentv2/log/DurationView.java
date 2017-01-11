@@ -17,7 +17,7 @@ public class DurationView extends LinearLayout {
     public TextView date;
     @ViewById(android.R.id.text2)
     public TextView duration;
-    private final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-mm-dd");
+    private final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
     public DurationView(Context context) {
         super(context);
     }
