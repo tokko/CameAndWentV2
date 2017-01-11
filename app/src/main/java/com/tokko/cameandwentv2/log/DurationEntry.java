@@ -23,8 +23,9 @@ public class DurationEntry {
     public TimeUtils timeUtils;
 
     public DurationEntry(List<LogEntry> logEntries) {
-        this.logEntries = logEntries;
         DaggerDurationEntryComponent.builder().build().inject(this);
+        this.logEntries = logEntries;
+        if(this.logEntries.size() > 0 && !this.logEntries.get(0).entered) this.logEntries = this.logEntries.stream().skip(1).collect(Collectors.toList());
     }
 
     public long getDuration() {

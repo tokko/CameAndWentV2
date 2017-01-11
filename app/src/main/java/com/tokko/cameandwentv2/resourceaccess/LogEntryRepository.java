@@ -68,7 +68,7 @@ public class LogEntryRepository {
             LogEntry currentEntry = sortedEntries.get(i);
             boolean currentState = currentEntry.entered;
             if(state == currentState){
-                if(bus != null) bus.post(new EventLogEntryDeleted(currentEntry));
+                deleteLogEntry(currentEntry);
                 continue;
             }
             state = currentState;

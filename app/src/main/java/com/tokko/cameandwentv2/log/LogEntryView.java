@@ -5,8 +5,6 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.tokko.cameandwentv2.R;
-import com.tokko.cameandwentv2.dagger.DaggerLogEntryComponent;
-import com.tokko.cameandwentv2.events.EventLogEntryDeleted;
 import com.tokko.cameandwentv2.events.OttoBus;
 import com.tokko.cameandwentv2.resourceaccess.LogEntryRepository;
 
@@ -17,8 +15,6 @@ import org.androidannotations.annotations.ViewById;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
-
-import javax.inject.Inject;
 
 @EViewGroup(R.layout.logentry)
 public class LogEntryView extends LinearLayout{

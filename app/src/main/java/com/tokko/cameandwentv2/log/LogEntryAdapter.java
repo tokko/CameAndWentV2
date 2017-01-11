@@ -31,10 +31,12 @@ public class LogEntryAdapter extends BaseExpandableListAdapter {
                     Optional<DurationEntry> existing = data.stream().filter(y -> y.getDate() == x.getDate()).findFirst();
                     if (existing.isPresent())
                         existing.get().addEntry(x);
-                    else
+                    else {
+                        if(!x.entered) return;
                         data.add(new DurationEntry(new ArrayList<LogEntry>() {{
                             add(x);
                         }}));
+                    }
                 }
         );
         notifyChange();
