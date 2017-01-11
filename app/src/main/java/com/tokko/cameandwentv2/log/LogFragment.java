@@ -12,10 +12,13 @@ import android.widget.ToggleButton;
 
 import com.squareup.otto.Subscribe;
 import com.tokko.cameandwentv2.R;
+import com.tokko.cameandwentv2.dagger.DaggerDurationEntryComponent;
+import com.tokko.cameandwentv2.dagger.DaggerLogFragmentComponent;
 import com.tokko.cameandwentv2.events.EventLogEntryDeleted;
 import com.tokko.cameandwentv2.events.EventLogEntryAdded;
 import com.tokko.cameandwentv2.events.OttoBus;
 import com.tokko.cameandwentv2.resourceaccess.LogEntryRepository;
+import com.tokko.cameandwentv2.utils.TimeUtils;
 
 import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.AfterViews;
@@ -29,6 +32,8 @@ import org.androidannotations.annotations.ViewById;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
+
+import javax.inject.Inject;
 
 @EFragment(R.layout.logfragment)
 @OptionsMenu(R.menu.menu_main)
@@ -46,11 +51,14 @@ public class LogFragment extends ListFragment{
     @Bean
     LogEntryRepository logEntryRepo;
 
+    @Inject
+    TimeUtils timeUtils;
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
-
+        DaggerLogFragmentComponent.builder().build().inject(this);
     }
 
     @Override
@@ -68,9 +76,9 @@ public class LogFragment extends ListFragment{
         super.onResume();
         list.setAdapter(adapter);
         new EntryLoader().execute();
+        setStatusOfClockButton();
     }
 
-    @AfterViews
     public void setStatusOfClockButton(){
         List<LogEntry> entries = logEntryRepo.readAll();
         Optional<Long> maxTime = entries.stream().map(LogEntry::getTime).max((a, b) -> (int)(a - b));
@@ -87,16 +95,18 @@ public class LogFragment extends ListFragment{
 
     @Subscribe
     public void deleteLogEntry(EventLogEntryDeleted entry){
-        logEntryRepo.deleteLogEntry(entry.getEntry());
         adapter.delete(entry.getEntry());
+    }
+
+    @Subscribe
+    public void addLogEntry(EventLogEntryAdded entryAdded){
+        adapter.add(entryAdded.getEntry());
     }
 
     @Click(R.id.clockButton)
     public void clockButtonClick(){
-        LogEntry entry = new LogEntry(System.currentTimeMillis(), clockButton.isChecked());
+        LogEntry entry = new LogEntry(timeUtils.getCurrentTime(), clockButton.isChecked());
         logEntryRepo.insertLogEntry(entry);
-        bus.post(new EventLogEntryAdded(entry));
-        adapter.add(entry);
     }
 
     private class EntryLoader extends AsyncTask<Void, Void, Collection<LogEntry>> {

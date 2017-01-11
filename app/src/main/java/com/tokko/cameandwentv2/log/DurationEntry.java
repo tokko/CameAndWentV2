@@ -21,9 +21,6 @@ public class DurationEntry {
     @Inject
     public TimeUtils timeUtils;
 
-    @Inject
-    public OttoBus bus;
-
     public DurationEntry(List<LogEntry> logEntries) {
         this.logEntries = logEntries;
         DaggerDurationEntryComponent.builder().build().inject(this);

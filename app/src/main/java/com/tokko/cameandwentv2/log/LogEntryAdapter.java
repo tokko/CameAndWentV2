@@ -48,10 +48,11 @@ public class LogEntryAdapter extends BaseExpandableListAdapter {
 
     public void delete(LogEntry entry) {
         Optional<DurationEntry> existingDuration = data.stream().filter(x -> x.getDate() == entry.getDate()).findFirst();
-        if(existingDuration.isPresent())
+        if(existingDuration.isPresent()) {
             existingDuration.get().getLogEntries().remove(entry);
-        if(existingDuration.get().getLogEntries().isEmpty())
-            data.remove(existingDuration.get());
+            if (existingDuration.get().getLogEntries().isEmpty())
+                data.remove(existingDuration.get());
+        }
         notifyChange();
     }
 
