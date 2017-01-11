@@ -112,6 +112,12 @@ public class LogFragment extends ListFragment{
         setStatusOfClockButton();
     }
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        bus.unregister(this);
+    }
+
     public void setStatusOfClockButton(){
         List<LogEntry> entries = logEntryRepo.readAll();
         Optional<Long> maxTime = entries.stream().map(LogEntry::getTime).max((a, b) -> (int)(a - b));

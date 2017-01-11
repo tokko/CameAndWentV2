@@ -2,11 +2,14 @@ package com.tokko.cameandwentv2.resourceaccess;
 
 import android.content.Context;
 
+import com.tokko.cameandwentv2.events.EventProjectAdded;
+import com.tokko.cameandwentv2.events.OttoBus;
 import com.tokko.cameandwentv2.project.Project;
 import com.tokko.cameandwentv2.project.ProjectDao;
 
 import org.androidannotations.annotations.EBean;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -22,7 +25,11 @@ public class ProjectRepository extends BaseRepository {
     }
 
     public List<Project> readAll() {
-        return Arrays.asList(new Project("Title1",0,0), new Project("Title2", 0, 0));
-        //return projectDao.loadAll();
+        return projectDao.loadAll();
+    }
+
+    public void insert(Project project) {
+        projectDao.insert(project);
+        bus.post(new EventProjectAdded(project));
     }
 }

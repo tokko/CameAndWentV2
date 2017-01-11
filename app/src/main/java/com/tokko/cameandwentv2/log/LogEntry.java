@@ -15,14 +15,14 @@ public class LogEntry {
     public long time;
     public boolean entered;
 
-    public LogEntry() {
-        super();
-    }
-
     @Keep
     public LogEntry(long time, boolean entered) {
         this.time = time;
         this.entered = entered;
+    }
+
+    @Generated(hash = 1393228716)
+    public LogEntry() {
     }
 
     public long getTime() {

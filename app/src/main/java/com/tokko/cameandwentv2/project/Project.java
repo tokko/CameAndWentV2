@@ -7,8 +7,8 @@ import org.greenrobot.greendao.annotation.Generated;
 
 @Entity
 public class Project {
-    @Id
-    public int id;
+    @Id(autoincrement = true)
+    public Long id;
     public String title;
     public long xcoord;
     public long ycoord;
@@ -20,16 +20,16 @@ public class Project {
         this.ycoord = ycoord;
     }
 
-    @Generated(hash = 1122814381)
-    public Project(int id, String title, long xcoord, long ycoord) {
+    @Generated(hash = 1767516619)
+    public Project() {
+    }
+
+    @Generated(hash = 1088829048)
+    public Project(Long id, String title, long xcoord, long ycoord) {
         this.id = id;
         this.title = title;
         this.xcoord = xcoord;
         this.ycoord = ycoord;
-    }
-
-    @Generated(hash = 1767516619)
-    public Project() {
     }
 
     @Override
@@ -37,35 +37,37 @@ public class Project {
         return title;
     }
 
-    public int getId() {
-        return id;
-    }
-
     public String getTitle() {
-        return title;
-    }
-
-    public long getXcoord() {
-        return xcoord;
-    }
-
-    public long getYcoord() {
-        return ycoord;
-    }
-
-    public void setId(int id) {
-        this.id = id;
+        return this.title;
     }
 
     public void setTitle(String title) {
         this.title = title;
     }
 
+    public long getXcoord() {
+        return this.xcoord;
+    }
+
     public void setXcoord(long xcoord) {
         this.xcoord = xcoord;
+    }
+
+    public long getYcoord() {
+        return this.ycoord;
     }
 
     public void setYcoord(long ycoord) {
         this.ycoord = ycoord;
     }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public Long getId() {
+        return this.id;
+    }
+
+
 }
