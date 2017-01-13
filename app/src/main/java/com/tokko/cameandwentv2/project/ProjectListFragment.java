@@ -124,6 +124,8 @@ public class ProjectListFragment extends DialogFragment implements AdapterView.O
             super.onPostExecute(projects);
             adapter = new ProjectListAdapter(getActivity(), projects);
             list.setAdapter(adapter);
+            if(adapter.isEmpty())
+                new ProjectEditorDialogFragment_().show(getFragmentManager(), "editor");
         }
     }
 
