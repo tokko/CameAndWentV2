@@ -1,6 +1,8 @@
 package com.tokko.cameandwentv2.log;
 
 import android.content.Context;
+import android.os.Handler;
+import android.os.Looper;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -15,6 +17,8 @@ import org.androidannotations.annotations.ViewById;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.concurrent.TimeUnit;
 
 @EViewGroup(android.R.layout.simple_expandable_list_item_2)
@@ -25,19 +29,14 @@ public class DurationView extends LinearLayout {
     public TextView duration;
     private final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
     private DurationEntry entry;
-    @Bean
-    OttoBus bus;
+    private Timer timer;
 
     public DurationView(Context context) {
         super(context);
     }
 
-    @AfterInject
-    public void initBus(){
-        bus.register(this);
-    }
-
     public void bind(DurationEntry entry){
+        if(entry.getLogEntries().isEmpty()) return;
         this.entry = entry;
         long duration = entry.getDuration();
         long hours = TimeUnit.MILLISECONDS.toHours(duration);
@@ -46,9 +45,17 @@ public class DurationView extends LinearLayout {
         String durationString = String.format("%02d:%02d:%02d", hours, minutes, seconds);
         date.setText(dateFormat.format(new Date(entry.getDate())));
         this.duration.setText(durationString);
-    }
-    @Subscribe
-    public void rebind(EventMinuteTicked event){
-        bind(entry);
+        if(timer != null ){
+            timer.cancel();
+            timer.purge();
+        }
+        timer = new Timer();
+
+        timer.scheduleAtFixedRate(new TimerTask() {
+            @Override
+            public void run() {
+                new Handler(Looper.getMainLooper()).post(() -> bind(entry));
+            }
+        }, 0, 1000);
     }
 }

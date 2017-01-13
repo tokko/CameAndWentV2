@@ -1,6 +1,7 @@
 package com.tokko.cameandwentv2.project;
 
 
+import android.app.DialogFragment;
 import android.app.FragmentManager;
 import android.app.ListFragment;
 import android.content.Context;
@@ -12,6 +13,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
@@ -23,6 +25,7 @@ import com.tokko.cameandwentv2.events.OttoBus;
 import com.tokko.cameandwentv2.resourceaccess.ProjectRepository;
 
 import org.androidannotations.annotations.AfterInject;
+import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EFragment;
 import org.androidannotations.annotations.OptionsItem;
@@ -31,9 +34,9 @@ import org.androidannotations.annotations.ViewById;
 
 import java.util.List;
 
-@EFragment
+@EFragment(R.layout.projectchooserdialog)
 @OptionsMenu(R.menu.menu_project)
-public class ProjectListFragment extends ListFragment{
+public class ProjectListFragment extends DialogFragment implements AdapterView.OnItemClickListener {
 
     @ViewById
     ListView list;
@@ -45,6 +48,9 @@ public class ProjectListFragment extends ListFragment{
     @Bean
     OttoBus bus;
 
+    private boolean chooserMode;
+    private OnProjectChosenListener onProjectChosenListener;
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -54,6 +60,17 @@ public class ProjectListFragment extends ListFragment{
     @AfterInject
     public void initBus(){
         bus.register(this);
+    }
+
+    @AfterViews
+    public void registerChooserMode(){
+        if(chooserMode)
+            list.setOnItemClickListener(this);
+    }
+
+    public void setChooserMode(OnProjectChosenListener onProjectChosenListener){
+        this.onProjectChosenListener = onProjectChosenListener;
+        chooserMode = true;
     }
 
     @Subscribe
@@ -71,7 +88,7 @@ public class ProjectListFragment extends ListFragment{
 
     @OptionsItem(R.id.addProject)
     public void addProject(){
-        new ProjectDialogFragment_().show(getFragmentManager(), "sometag");
+        new ProjectEditorDialogFragment_().show(getFragmentManager(), "sometag");
     }
     @Override
     public void onResume() {
@@ -85,6 +102,16 @@ public class ProjectListFragment extends ListFragment{
         bus.unregister(this);
     }
 
+    @Override
+    public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+        onProjectChosenListener.onProjectChosen(adapter.getItem(i).getId());
+        dismiss();
+    }
+
+    public interface OnProjectChosenListener{
+        void onProjectChosen(Long projectId);
+    }
+
     public class ProjectLoader extends AsyncTask<Void, Void, List<Project>> {
 
         @Override
@@ -96,9 +123,7 @@ public class ProjectListFragment extends ListFragment{
         protected void onPostExecute(List<Project> projects) {
             super.onPostExecute(projects);
             adapter = new ProjectListAdapter(getActivity(), projects);
-            setListAdapter(adapter);
-            if(adapter.isEmpty())
-                new ProjectDialogFragment_().show(getFragmentManager(), "sometag");
+            list.setAdapter(adapter);
         }
     }
 
@@ -118,6 +143,7 @@ public class ProjectListFragment extends ListFragment{
             if(convertView == null) projectView = ProjectView_.build(context);
             else projectView = (ProjectView) convertView;
             projectView.bind(getItem(position));
+            projectView.delete.setVisibility(chooserMode ? View.GONE : View.VISIBLE);
             return projectView;
         }
     }

@@ -62,4 +62,10 @@ public class LogEntryRepository extends BaseRepository {
         }
         return result;
     }
+
+    public LogEntry getLatestLogEntry() {
+        List<LogEntry> entries = logEntryDao.queryBuilder().orderDesc(LogEntryDao.Properties.ProjectId).limit(1).build().list();
+        if(entries.isEmpty()) return null;
+        return entries.get(0);
+    }
 }

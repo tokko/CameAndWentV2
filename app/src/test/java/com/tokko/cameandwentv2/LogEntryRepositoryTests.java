@@ -19,8 +19,8 @@ public class LogEntryRepositoryTests {
     @Test
     public void purgeDoubleToggles_PurgesToggles(){
         List<LogEntry> list = Arrays.asList(
-                new LogEntry(1, true),
-                new LogEntry(2, true)
+                new LogEntry(1, true, 0L),
+                new LogEntry(2, true, 0L)
         );
 
         List<LogEntry> result = new LogEntryRepository(null).purgeDoubleToggles(list);
@@ -31,12 +31,12 @@ public class LogEntryRepositoryTests {
     @Test
     public void purgeDoubleToggles_PurgesToggles_ManyEntries(){
         List<LogEntry> list = Arrays.asList(
-                new LogEntry(1, true),
-                new LogEntry(2, true),
-                new LogEntry(3, false),
-                new LogEntry(4, false),
-                new LogEntry(5, true),
-                new LogEntry(6, false)
+                new LogEntry(1, true, 0L),
+                new LogEntry(2, true, 0L),
+                new LogEntry(3, false, 0L),
+                new LogEntry(4, false, 0L),
+                new LogEntry(5, true, 0L),
+                new LogEntry(6, false, 0L)
         );
 
         List<LogEntry> result = new LogEntryRepository(null).purgeDoubleToggles(list);

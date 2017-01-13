@@ -1,6 +1,7 @@
 package com.tokko.cameandwentv2.project;
 
 import android.content.Context;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -19,6 +20,8 @@ import org.androidannotations.annotations.ViewById;
 public class ProjectView extends LinearLayout{
     @ViewById
     public TextView text1;
+    @ViewById
+    ImageButton delete;
 
     @Bean
     ProjectRepository projectRepository;

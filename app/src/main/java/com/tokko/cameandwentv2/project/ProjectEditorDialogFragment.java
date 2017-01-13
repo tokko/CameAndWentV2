@@ -16,11 +16,9 @@ import com.tokko.cameandwentv2.resourceaccess.ProjectRepository;
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EFragment;
-import org.androidannotations.annotations.SystemService;
-import org.androidannotations.annotations.ViewById;
 
 @EFragment
-public class ProjectDialogFragment extends DialogFragment{
+public class ProjectEditorDialogFragment extends DialogFragment{
 
     EditText locationName;
 
@@ -52,15 +50,6 @@ public class ProjectDialogFragment extends DialogFragment{
 
     @Click(R.id.setLocationButton)
     public void setLocationClick(){
-
-    }
-
-    public void onOkClick(){
-        projectRepository.insert(new Project(locationName.getText().toString(), 0, 0));
-        dismiss();
-    }
-
-    public void onCancelClick(){
-        dismiss();
+        //TODO: geolocation stuff here
     }
 }

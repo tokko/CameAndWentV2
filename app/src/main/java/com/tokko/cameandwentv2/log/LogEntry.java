@@ -1,9 +1,5 @@
 package com.tokko.cameandwentv2.log;
 
-import com.activeandroid.Model;
-import com.activeandroid.annotation.Column;
-import com.activeandroid.annotation.Table;
-
 import org.greenrobot.greendao.annotation.Entity;
 import org.greenrobot.greendao.annotation.Id;
 import org.greenrobot.greendao.annotation.Keep;
@@ -14,11 +10,13 @@ public class LogEntry {
     @Id
     public long time;
     public boolean entered;
+    private Long projectId;
 
     @Keep
-    public LogEntry(long time, boolean entered) {
+    public LogEntry(long time, boolean entered, Long projectId) {
         this.time = time;
         this.entered = entered;
+        this.projectId = projectId;
     }
 
     @Generated(hash = 1393228716)
@@ -47,5 +45,13 @@ public class LogEntry {
 
     public void setEntered(boolean entered) {
         this.entered = entered;
+    }
+
+    public Long getProjectId() {
+        return this.projectId;
+    }
+
+    public void setProjectId(Long projectId) {
+        this.projectId = projectId;
     }
 }

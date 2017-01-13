@@ -17,6 +17,8 @@ import com.tokko.cameandwentv2.events.EventLogEntryDeleted;
 import com.tokko.cameandwentv2.events.EventLogEntryAdded;
 import com.tokko.cameandwentv2.events.EventMinuteTicked;
 import com.tokko.cameandwentv2.events.OttoBus;
+import com.tokko.cameandwentv2.project.ProjectListFragment;
+import com.tokko.cameandwentv2.project.ProjectListFragment_;
 import com.tokko.cameandwentv2.resourceaccess.LogEntryRepository;
 import com.tokko.cameandwentv2.utils.TimeUtils;
 
@@ -37,7 +39,7 @@ import java.util.TimerTask;
 import javax.inject.Inject;
 
 @EFragment(R.layout.logfragment)
-public class LogFragment extends ListFragment{
+public class LogFragment extends ListFragment implements ProjectListFragment.OnProjectChosenListener {
 
     @ViewById
     ExpandableListView list;
@@ -53,7 +55,6 @@ public class LogFragment extends ListFragment{
 
     @Inject
     TimeUtils timeUtils;
-    Timer timer;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -75,19 +76,11 @@ public class LogFragment extends ListFragment{
     @Override
     public void onStart() {
         super.onStart();
-        timer = new Timer();
-        timer.scheduleAtFixedRate(new TimerTask() {
-            @Override
-            public void run() {
-                getActivity().runOnUiThread(() -> bus.post(new EventMinuteTicked()));
-            }
-        }, 0, 1000);
-    }
+        }
 
     @Override
     public void onStop() {
         super.onStop();
-        timer.cancel();
     }
 
     @Override
@@ -105,12 +98,11 @@ public class LogFragment extends ListFragment{
     }
 
     public void setStatusOfClockButton(){
-        List<LogEntry> entries = logEntryRepo.readAll();
-        Optional<Long> maxTime = entries.stream().map(LogEntry::getTime).max((a, b) -> (int)(a - b));
-        if(maxTime.isPresent()){
-            Optional<LogEntry> maxEntry = entries.stream().filter(x -> x.getTime() == maxTime.get()).findFirst();
-            clockButton.setChecked(maxEntry.get().entered);
-        }
+        LogEntry latestLogEntry = logEntryRepo.getLatestLogEntry();
+        if(latestLogEntry != null)
+            clockButton.setChecked(latestLogEntry.entered);
+        else
+            clockButton.setChecked(false);
     }
 
 
@@ -134,7 +126,20 @@ public class LogFragment extends ListFragment{
 
     @Click(R.id.clockButton)
     public void clockButtonClick(){
-        LogEntry entry = new LogEntry(timeUtils.getCurrentTime(), clockButton.isChecked());
+        if(clockButton.isChecked()){
+            ProjectListFragment_ projectChooser = new ProjectListFragment_();
+            projectChooser.setChooserMode(this);
+            projectChooser.show(getFragmentManager(), "projectChooser");
+            return;
+        }
+        LogEntry latestEntry = logEntryRepo.getLatestLogEntry();
+        LogEntry entry = new LogEntry(timeUtils.getCurrentTime(), clockButton.isChecked(), latestEntry.getProjectId());
+        logEntryRepo.insertLogEntry(entry);
+    }
+
+    @Override
+    public void onProjectChosen(Long projectId) {
+        LogEntry entry = new LogEntry(timeUtils.getCurrentTime(), clockButton.isChecked(), projectId);
         logEntryRepo.insertLogEntry(entry);
     }
 
