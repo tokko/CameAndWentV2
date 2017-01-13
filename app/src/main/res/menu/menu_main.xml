@@ -2,9 +2,9 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="com.tokko.cameandwentv2.MainActivity">
+
     <item
-        android:id="@+id/action_clear"
-        android:orderInCategory="100"
-        android:title="Clear"
+        android:id="@+id/manageProjects"
+        android:title="Projects"
         app:showAsAction="never" />
 </menu>

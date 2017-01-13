@@ -12,7 +12,6 @@ import android.widget.ToggleButton;
 
 import com.squareup.otto.Subscribe;
 import com.tokko.cameandwentv2.R;
-import com.tokko.cameandwentv2.dagger.DaggerDurationEntryComponent;
 import com.tokko.cameandwentv2.dagger.DaggerLogFragmentComponent;
 import com.tokko.cameandwentv2.events.EventLogEntryDeleted;
 import com.tokko.cameandwentv2.events.EventLogEntryAdded;
@@ -22,15 +21,12 @@ import com.tokko.cameandwentv2.resourceaccess.LogEntryRepository;
 import com.tokko.cameandwentv2.utils.TimeUtils;
 
 import org.androidannotations.annotations.AfterInject;
-import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EFragment;
 import org.androidannotations.annotations.OptionsItem;
 import org.androidannotations.annotations.OptionsMenu;
 import org.androidannotations.annotations.ViewById;
-import org.joda.time.DateTime;
-import org.joda.time.MutableDateTime;
 
 import java.util.Collection;
 import java.util.List;
@@ -41,7 +37,6 @@ import java.util.TimerTask;
 import javax.inject.Inject;
 
 @EFragment(R.layout.logfragment)
-@OptionsMenu(R.menu.menu_main)
 public class LogFragment extends ListFragment{
 
     @ViewById
@@ -89,15 +84,6 @@ public class LogFragment extends ListFragment{
         }, 0, 1000);
     }
 
-    private long getCurrentMinute() {
-        MutableDateTime dt = new MutableDateTime(timeUtils.getCurrentTime());
-        DateTime dt1 = new DateTime(timeUtils.getCurrentTime());
-        dt.setSecondOfMinute(0);
-        dt.setMillisOfSecond(0);
-        dt.addMinutes(1);
-        return dt.getMillis() - dt1.getMillis();
-    }
-
     @Override
     public void onStop() {
         super.onStop();
@@ -126,7 +112,9 @@ public class LogFragment extends ListFragment{
             clockButton.setChecked(maxEntry.get().entered);
         }
     }
-    @OptionsItem(R.id.action_clear)
+
+
+    //@OptionsItem(R.id.action_clear)
     public void purgeDb(){
         logEntryRepo.deleteAll();
         adapter.clear();
