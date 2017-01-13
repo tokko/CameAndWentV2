@@ -3,6 +3,7 @@ package com.tokko.cameandwentv2.project;
 import android.content.Context;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.tokko.cameandwentv2.R;
@@ -13,11 +14,8 @@ import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EViewGroup;
 import org.androidannotations.annotations.ViewById;
 
-/**
- * Created by andre on 11/01/2017.
- */
 @EViewGroup(R.layout.projectlistrow)
-public class ProjectView extends LinearLayout{
+public class ProjectView extends RelativeLayout{
     @ViewById
     public TextView text1;
     @ViewById
