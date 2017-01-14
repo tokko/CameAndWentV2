@@ -16,6 +16,8 @@ public class LogEntry {
     public long time;
     public boolean entered;
     private Long projectId;
+    public String comment;
+
     @ToOne(joinProperty = "projectId")
     public Project project;
     /** Used to resolve relations */
@@ -38,6 +40,21 @@ public class LogEntry {
     public LogEntry() {
     }
 
+    @Generated(hash = 761683243)
+    public LogEntry(long time, boolean entered, Long projectId, String comment) {
+        this.time = time;
+        this.entered = entered;
+        this.projectId = projectId;
+        this.comment = comment;
+    }
+
+    public String getComment() {
+        return comment;
+    }
+
+    public void setComment(String comment) {
+        this.comment = comment;
+    }
 
     public long getTime() {
         return time;

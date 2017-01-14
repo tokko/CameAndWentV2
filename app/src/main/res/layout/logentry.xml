@@ -22,10 +22,26 @@
             android:text="placeholder"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
+        <EditText
+            android:layout_width="match_parent"
+            android:id="@+id/comment"
+            android:hint="Comment"
+            android:visibility="gone"
+            android:layout_height="wrap_content" />
     </LinearLayout>
-    <ImageButton
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:orientation="horizontal"
+        android:layout_height="wrap_content">
+        <ImageButton
+            android:layout_width="wrap_content"
+            android:src="@android:drawable/ic_menu_edit"
+            android:id="@+id/edit"
+            android:layout_height="wrap_content" />
+        <ImageButton
         android:layout_width="wrap_content"
         android:src="@android:drawable/ic_delete"
         android:id="@+id/delete"
         android:layout_height="wrap_content" />
+    </LinearLayout>
 </LinearLayout>

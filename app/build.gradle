@@ -29,7 +29,7 @@ android {
     }
 }
 greendao {
-    schemaVersion 4
+    schemaVersion 5
 }
 def AAVersion = '4.1.0'
 dependencies {

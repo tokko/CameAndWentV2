@@ -1,6 +1,8 @@
 package com.tokko.cameandwentv2.log;
 
 import android.content.Context;
+import android.view.View;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -24,6 +26,8 @@ public class LogEntryView extends LinearLayout{
     TextView entered;
     @ViewById
     TextView project;
+    @ViewById
+    TextView comment;
 
     @Bean
     OttoBus bus;
@@ -32,8 +36,11 @@ public class LogEntryView extends LinearLayout{
     private LogEntry entry;
     @Bean
     LogEntryRepository logEntryRepository;
+    private Context context;
+
     public LogEntryView(Context context) {
         super(context);
+        this.context = context;
     }
 
     public void bind(LogEntry entry){
@@ -41,7 +48,15 @@ public class LogEntryView extends LinearLayout{
         time.setText(timeFormat.format(new Date(entry.getTime())));
         entered.setText(entry.isEntered() ? "Arrived" : "Departed");
         project.setText(entry.getProject().getTitle());
+        comment.setVisibility(entry.getComment() != null ? VISIBLE : GONE);
+        comment.setText(entry.getComment());
     }
+
+    @Click(R.id.edit)
+    public void edit(){
+       //TODO: signal parent activity to show editor dialog fragment
+    }
+
     @Click(R.id.delete)
     public void delete(){
         logEntryRepository.deleteLogEntry(entry);
