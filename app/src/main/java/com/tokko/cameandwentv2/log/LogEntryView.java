@@ -44,8 +44,6 @@ public class LogEntryView extends LinearLayout{
     }
     @Click(R.id.delete)
     public void delete(){
-       // setVisibility(View.GONE);
-       //
         logEntryRepository.deleteLogEntry(entry);
     }
 }
