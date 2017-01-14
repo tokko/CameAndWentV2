@@ -22,6 +22,9 @@ public class LogEntryView extends LinearLayout{
     TextView time;
     @ViewById
     TextView entered;
+    @ViewById
+    TextView project;
+
     @Bean
     OttoBus bus;
 
@@ -37,7 +40,7 @@ public class LogEntryView extends LinearLayout{
         this.entry = entry;
         time.setText(timeFormat.format(new Date(entry.getTime())));
         entered.setText(entry.isEntered() ? "Arrived" : "Departed");
-
+        project.setText(entry.getProject().getTitle());
     }
     @Click(R.id.delete)
     public void delete(){
