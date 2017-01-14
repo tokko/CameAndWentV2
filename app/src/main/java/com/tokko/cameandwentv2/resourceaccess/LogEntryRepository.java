@@ -1,6 +1,8 @@
 package com.tokko.cameandwentv2.resourceaccess;
 
 import android.content.Context;
+import android.os.Handler;
+import android.os.Looper;
 
 import com.tokko.cameandwentv2.events.EventLogEntryAdded;
 import com.tokko.cameandwentv2.events.EventLogEntryDeleted;
@@ -33,7 +35,7 @@ public class LogEntryRepository extends BaseRepository {
 
     public void deleteLogEntry(LogEntry entry){
         logEntryDao.delete(entry);
-        bus.post(new EventLogEntryDeleted(entry));
+        new Handler(Looper.getMainLooper()).post(() -> bus.post(new EventLogEntryDeleted(entry)));
     }
 
     public List<LogEntry> readAll() {
@@ -64,7 +66,7 @@ public class LogEntryRepository extends BaseRepository {
     }
 
     public LogEntry getLatestLogEntry() {
-        List<LogEntry> entries = logEntryDao.queryBuilder().orderDesc(LogEntryDao.Properties.ProjectId).limit(1).build().list();
+        List<LogEntry> entries = logEntryDao.queryBuilder().orderDesc(LogEntryDao.Properties.Time).limit(1).build().list();
         if(entries.isEmpty()) return null;
         return entries.get(0);
     }
