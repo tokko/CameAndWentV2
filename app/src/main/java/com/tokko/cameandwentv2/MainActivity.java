@@ -1,12 +1,16 @@
 package com.tokko.cameandwentv2;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.widget.Toolbar;
 
+import com.tokko.cameandwentv2.log.LogEntryEditFragment;
+import com.tokko.cameandwentv2.log.LogEntryEditFragment_;
 import com.tokko.cameandwentv2.log.LogFragment_;
 import com.tokko.cameandwentv2.project.ProjectListFragment_;
+import com.tokko.cameandwentv2.resourceaccess.LogEntryRepository;
 import com.tokko.cameandwentv2.resourceaccess.ProjectRepository;
 
 import org.androidannotations.annotations.AfterViews;
@@ -18,13 +22,17 @@ import org.androidannotations.annotations.ViewById;
 
 @EActivity(R.layout.mainactivity)
 @OptionsMenu(R.menu.menu_main)
-public class MainActivity extends Activity {
+public class MainActivity extends Activity implements LogEntryEditFragment.LogEditCallbacks {
+    public static final String ACTION_EDIT_LOG = "ACTION_EDIT_LOG";
+    public static final String EXTRA_LOGENTRYID = "EXTRA_LOGENTRYID";
+
     @ViewById
     Toolbar toolbar;
 
     @Bean
     ProjectRepository projectRepository;
-
+    @Bean
+    LogEntryRepository logEntryRepository;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -36,6 +44,17 @@ public class MainActivity extends Activity {
         super.onResume();
         showProjectFragmentIfThereAreNoProjects();
 
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        if(intent.getAction().equals(ACTION_EDIT_LOG)) {
+            LogEntryEditFragment_ fragment = new LogEntryEditFragment_();
+            fragment.setEntry(logEntryRepository.getLogEntry(intent.getLongExtra(EXTRA_LOGENTRYID, -1L)));
+            fragment.setCallbacks(this);
+            getFragmentManager().beginTransaction().addToBackStack("edit").replace(R.id.mainlayout, fragment).commit();
+        }
     }
 
     public void showProjectFragmentIfThereAreNoProjects(){
@@ -67,5 +86,10 @@ public class MainActivity extends Activity {
 
     public void showLogFragment(){
         getFragmentManager().beginTransaction().replace(R.id.mainlayout, new LogFragment_()).commit();
+    }
+
+    @Override
+    public void OnFinished() {
+        getFragmentManager().popBackStack();
     }
 }

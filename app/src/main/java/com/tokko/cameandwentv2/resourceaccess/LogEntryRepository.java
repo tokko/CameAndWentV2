@@ -70,4 +70,12 @@ public class LogEntryRepository extends BaseRepository {
         if(entries.isEmpty()) return null;
         return entries.get(0);
     }
+
+    public LogEntry getLogEntry(Long id) {
+        return logEntryDao.load(id);
+    }
+
+    public void update(LogEntry entry) {
+        logEntryDao.update(entry);
+    }
 }

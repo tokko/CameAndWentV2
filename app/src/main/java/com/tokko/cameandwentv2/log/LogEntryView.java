@@ -1,11 +1,14 @@
 package com.tokko.cameandwentv2.log;
 
 import android.content.Context;
+import android.content.Intent;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.tokko.cameandwentv2.MainActivity;
+import com.tokko.cameandwentv2.MainActivity_;
 import com.tokko.cameandwentv2.R;
 import com.tokko.cameandwentv2.events.OttoBus;
 import com.tokko.cameandwentv2.resourceaccess.LogEntryRepository;
@@ -54,7 +57,11 @@ public class LogEntryView extends LinearLayout{
 
     @Click(R.id.edit)
     public void edit(){
-       //TODO: signal parent activity to show editor dialog fragment
+        Intent i = new Intent(context, MainActivity_.class);
+        i.setAction(MainActivity.ACTION_EDIT_LOG);
+        i.putExtra(MainActivity.EXTRA_LOGENTRYID, entry.getId());
+        i.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        context.startActivity(i);
     }
 
     @Click(R.id.delete)

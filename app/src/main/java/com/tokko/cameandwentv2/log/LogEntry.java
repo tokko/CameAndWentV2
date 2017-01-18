@@ -12,7 +12,8 @@ import com.tokko.cameandwentv2.project.ProjectDao;
 
 @Entity
 public class LogEntry {
-    @Id
+    @Id(autoincrement = true)
+    public Long id;
     public long time;
     public boolean entered;
     private Long projectId;
@@ -35,13 +36,19 @@ public class LogEntry {
         this.entered = entered;
         this.projectId = projectId;
     }
+    @Keep
+    public LogEntry(long time, boolean entered, Long projectId, String comment) {
+        this(time, entered, projectId);
+        this.comment = comment;
+    }
 
     @Generated(hash = 1393228716)
     public LogEntry() {
     }
 
-    @Generated(hash = 761683243)
-    public LogEntry(long time, boolean entered, Long projectId, String comment) {
+    @Generated(hash = 1039081635)
+    public LogEntry(Long id, long time, boolean entered, Long projectId, String comment) {
+        this.id = id;
         this.time = time;
         this.entered = entered;
         this.projectId = projectId;
@@ -151,6 +158,14 @@ public class LogEntry {
             throw new DaoException("Entity is detached from DAO context");
         }
         myDao.update(this);
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     /** called by internal mechanisms, do not call yourself. */
