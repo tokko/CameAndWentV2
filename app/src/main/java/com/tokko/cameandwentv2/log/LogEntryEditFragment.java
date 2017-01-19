@@ -98,8 +98,6 @@ public class LogEntryEditFragment extends Fragment implements AdapterView.OnItem
         setTimePickerButtonText(new DateTime(entry.getDate()));
     }
 
-
-
     @Override
     public void onResume() {
         super.onResume();
@@ -108,7 +106,6 @@ public class LogEntryEditFragment extends Fragment implements AdapterView.OnItem
 
     @Click(R.id.datePickerButton)
     public void chooseDate(){
-       // DatePickerFragment_.Create(timeUtils.getCurrentTimeDateTime()).show(getFragmentManager(), "date");
         DateTime dt = new DateTime(entry.getDate());
         DatePickerDialog dialogBuilder = new DatePickerDialog(getActivity(), this, dt.getYear(), dt.getMonthOfYear(), dt.getDayOfMonth());
         dialogBuilder.show();
