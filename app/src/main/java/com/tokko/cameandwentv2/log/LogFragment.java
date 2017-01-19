@@ -130,9 +130,9 @@ public class LogFragment extends ListFragment implements ProjectListFragment.OnP
             adapter.clear();
             adapter.addAll(logEntries);
             adapter.notifyDataSetChanged();
-
             setStatusOfClockButton(logEntries.get(logEntries.size()-1));
         }
+        list.expandGroup(adapter.getGroupCount()-1);
     }
 
     @Click(R.id.clockButton)
