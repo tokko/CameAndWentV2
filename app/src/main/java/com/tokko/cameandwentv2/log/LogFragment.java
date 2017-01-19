@@ -30,6 +30,7 @@ import org.androidannotations.annotations.EFragment;
 import org.androidannotations.annotations.OptionsItem;
 import org.androidannotations.annotations.ViewById;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -125,6 +126,10 @@ public class LogFragment extends ListFragment implements ProjectListFragment.OnP
     }
     @OptionsItem(R.id.reload)
     public void reload(){
+        List<Long> expandIds = new ArrayList<>();
+        for(int i = 0; i < adapter.getGroupCount(); i++)
+            if(list.isGroupExpanded(i))
+                expandIds.add(adapter.getGroupId(i));
         if (adapter != null) {
             List<LogEntry> logEntries = logEntryRepo.readAll();
             adapter.clear();
@@ -133,6 +138,9 @@ public class LogFragment extends ListFragment implements ProjectListFragment.OnP
             setStatusOfClockButton(logEntries.get(logEntries.size()-1));
         }
         list.expandGroup(adapter.getGroupCount()-1);
+        for(int i = 0; i < adapter.getGroupCount(); i++)
+            if(expandIds.contains(adapter.getGroupId(i)))
+                list.expandGroup(i);
     }
 
     @Click(R.id.clockButton)
