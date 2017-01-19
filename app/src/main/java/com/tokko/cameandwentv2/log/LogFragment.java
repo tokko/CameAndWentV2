@@ -1,7 +1,6 @@
 package com.tokko.cameandwentv2.log;
 
 import android.app.ListFragment;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
@@ -13,17 +12,17 @@ import android.widget.ToggleButton;
 import com.squareup.otto.Subscribe;
 import com.tokko.cameandwentv2.R;
 import com.tokko.cameandwentv2.dagger.DaggerLogFragmentComponent;
-import com.tokko.cameandwentv2.events.EventLogEntryDeleted;
 import com.tokko.cameandwentv2.events.EventLogEntryAdded;
+import com.tokko.cameandwentv2.events.EventLogEntryDeleted;
 import com.tokko.cameandwentv2.events.EventLogEntryUpdated;
 import com.tokko.cameandwentv2.events.OttoBus;
 import com.tokko.cameandwentv2.project.ProjectListFragment;
 import com.tokko.cameandwentv2.project.ProjectListFragment_;
 import com.tokko.cameandwentv2.resourceaccess.LogEntryRepository;
-import com.tokko.cameandwentv2.resourceaccess.LogEntryRepository_;
 import com.tokko.cameandwentv2.utils.TimeUtils;
 
 import org.androidannotations.annotations.AfterInject;
+import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EFragment;
@@ -31,7 +30,6 @@ import org.androidannotations.annotations.OptionsItem;
 import org.androidannotations.annotations.ViewById;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -102,6 +100,10 @@ public class LogFragment extends ListFragment implements ProjectListFragment.OnP
             clockButton.setChecked(false);
     }
 
+    @AfterViews
+    public void initViews() {
+        list.setStackFromBottom(true);
+    }
 
     @OptionsItem(R.id.action_clear)
     public void purgeDb() {
