@@ -126,7 +126,7 @@ public class LogFragment extends ListFragment implements ProjectListFragment.OnP
     @OptionsItem(R.id.reload)
     public void reload(){
         if (adapter != null) {
-            List<LogEntry> logEntries = new LogEntryRepository(getActivity()).readAll();
+            List<LogEntry> logEntries = logEntryRepo.readAll();
             adapter.clear();
             adapter.addAll(logEntries);
             adapter.notifyDataSetChanged();
