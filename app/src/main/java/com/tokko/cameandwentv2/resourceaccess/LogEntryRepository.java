@@ -21,37 +21,38 @@ import javax.inject.Inject;
 @EBean
 public class LogEntryRepository extends BaseRepository {
 
-    private LogEntryDao logEntryDao;
-
     @Inject
     public LogEntryRepository(Context context) {
         super(context);
-        if(daoSession != null)
-            logEntryDao = daoSession.getLogEntryDao();
     }
 
+    public LogEntryDao getDao(){
+        if(daoSession != null)
+            return daoSession.getLogEntryDao();
+        return null;
+    }
     public void Commit(LogEntry entry){
         if(entry.getId() == null) {
-            logEntryDao.insert(entry);
+            getDao().insert(entry);
             bus.post(new EventLogEntryAdded(entry));
         }
         else{
-            logEntryDao.update(entry);
+            getDao().update(entry);
             bus.post(new EventLogEntryUpdated(entry));
         }
     }
 
     public void deleteLogEntry(LogEntry entry){
-        logEntryDao.delete(entry);
+        getDao().delete(entry);
         new Handler(Looper.getMainLooper()).post(() -> bus.post(new EventLogEntryDeleted(entry)));
     }
 
     public List<LogEntry> readAll() {
-        return logEntryDao.loadAll();
+        return purgeDoubleToggles(getDao().loadAll());
     }
 
     public void deleteAll() {
-        logEntryDao.deleteAll();
+        getDao().deleteAll();
     }
 
     public List<LogEntry> purgeDoubleToggles(List<LogEntry> entries){
@@ -74,13 +75,13 @@ public class LogEntryRepository extends BaseRepository {
     }
 
     public LogEntry getLatestLogEntry() {
-        List<LogEntry> entries = logEntryDao.queryBuilder().orderDesc(LogEntryDao.Properties.Time).limit(1).build().list();
+        List<LogEntry> entries = getDao().queryBuilder().orderDesc(LogEntryDao.Properties.Time).limit(1).build().list();
         if(entries.isEmpty()) return null;
         return entries.get(0);
     }
 
     public LogEntry getLogEntry(Long id) {
-        return logEntryDao.load(id);
+        return getDao().load(id);
     }
 
 }

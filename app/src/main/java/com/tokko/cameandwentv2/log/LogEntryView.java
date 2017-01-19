@@ -51,7 +51,7 @@ public class LogEntryView extends LinearLayout{
         time.setText(timeFormat.format(new Date(entry.getTime())));
         entered.setText(entry.isEntered() ? "Arrived" : "Departed");
         project.setText(entry.getProject().getTitle());
-        comment.setVisibility(entry.getComment() != null ? VISIBLE : GONE);
+        comment.setVisibility(entry.getComment() != null && !entry.comment.equals("") ? VISIBLE : GONE);
         comment.setText(entry.getComment());
     }
 

@@ -99,6 +99,8 @@ public class LogEntryEditFragment extends Fragment implements DatePickerDialog.O
     @Override
     public void onResume() {
         super.onResume();
+        adapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_spinner_dropdown_item, android.R.id.text1);
+        projectPicker.setAdapter(adapter);
         new ProjectLoader().execute();
         Long id = getArguments().getLong(EXTRA_ID, -1);
         if(id == -1)
@@ -181,8 +183,8 @@ public class LogEntryEditFragment extends Fragment implements DatePickerDialog.O
 
         @Override
         protected void onPostExecute(List<Project> projects) {
-            adapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_spinner_dropdown_item, android.R.id.text1, projects);
-            projectPicker.setAdapter(adapter);
+            adapter.clear();
+            adapter.addAll(projects);
             adapter.notifyDataSetChanged();
         }
     }

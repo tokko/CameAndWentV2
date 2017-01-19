@@ -20,6 +20,7 @@ import com.tokko.cameandwentv2.events.OttoBus;
 import com.tokko.cameandwentv2.project.ProjectListFragment;
 import com.tokko.cameandwentv2.project.ProjectListFragment_;
 import com.tokko.cameandwentv2.resourceaccess.LogEntryRepository;
+import com.tokko.cameandwentv2.resourceaccess.LogEntryRepository_;
 import com.tokko.cameandwentv2.utils.TimeUtils;
 
 import org.androidannotations.annotations.AfterInject;
@@ -83,7 +84,7 @@ public class LogFragment extends ListFragment implements ProjectListFragment.OnP
     public void onResume() {
         super.onResume();
         list.setAdapter(adapter);
-        new EntryLoader().execute();
+        reload();
     }
 
     @Override
@@ -110,30 +111,28 @@ public class LogFragment extends ListFragment implements ProjectListFragment.OnP
 
     @Subscribe
     public void deleteLogEntry(EventLogEntryDeleted entry) {
-        new EntryLoader().execute();
-
-        //  adapter.delete(entry.getEntry());
-    //    setStatusOfClockButton();
+       reload();
     }
 
     @Subscribe
     public void addLogEntry(EventLogEntryAdded entryAdded) {
-        new EntryLoader().execute();
-
-//        adapter.add(entryAdded.getEntry());
-  //      setStatusOfClockButton();
+        reload();
     }
 
     @Subscribe
     public void updateEntry(EventLogEntryUpdated entryUpdated) {
-     //   adapter.delete(entryUpdated.getEntry());
-     //   adapter.add(entryUpdated.getEntry());
-        new EntryLoader().execute();
-
+        reload();
     }
     @OptionsItem(R.id.reload)
     public void reload(){
-        new EntryLoader().execute();
+        if (adapter != null) {
+            List<LogEntry> logEntries = new LogEntryRepository(getActivity()).readAll();
+            adapter.clear();
+            adapter.addAll(logEntries);
+            adapter.notifyDataSetChanged();
+
+            setStatusOfClockButton(logEntries.get(logEntries.size()-1));
+        }
     }
 
     @Click(R.id.clockButton)
@@ -153,23 +152,5 @@ public class LogFragment extends ListFragment implements ProjectListFragment.OnP
     public void onProjectChosen(Long projectId) {
         LogEntry entry = new LogEntry(timeUtils.getCurrentTimeMillis(), clockButton.isChecked(), projectId);
         logEntryRepo.Commit(entry);
-    }
-
-    private class EntryLoader extends AsyncTask<Void, Void, List<LogEntry>> {
-
-        @Override
-        protected List<LogEntry> doInBackground(Void... voids) {
-            return logEntryRepo.readAll();
-        }
-
-        @Override
-        protected void onPostExecute(List<LogEntry> logEntries) {
-            if (adapter != null) {
-                adapter.clear();
-                adapter.addAll(logEntries);
-                adapter.notifyDataSetChanged();
-                setStatusOfClockButton(logEntries.get(logEntries.size()-1));
-            }
-        }
     }
 }
