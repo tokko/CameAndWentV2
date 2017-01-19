@@ -43,13 +43,13 @@ public class DurationEntry {
 
     public long sumDurations(List<LogEntry> entries){
         if(entries.size() == 1){
-            return timeUtils.getCurrentTime() - entries.get(0).getTime();
+            return timeUtils.getCurrentTimeMillis() - entries.get(0).getTime();
         }
         long sum = 0;
         Optional<Long> maxTime = entries.stream().map(LogEntry::getTime).max((a, b) -> (int)(a - b));
         Optional<LogEntry> last = entries.stream().filter(x -> x.getTime() == maxTime.get()).findFirst();
         if(last.isPresent() && last.get().entered) {
-            sum = timeUtils.getCurrentTime() - last.get().getTime();
+            sum = timeUtils.getCurrentTimeMillis() - last.get().getTime();
             entries = entries.stream().limit(entries.size()-1).collect(Collectors.toList());
         }
         sum += abs(entries.stream().map(x -> x.getTime() * (x.entered ? 1 : -1)).collect(Collectors.summingLong(Long::valueOf)));

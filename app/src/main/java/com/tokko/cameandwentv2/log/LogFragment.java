@@ -15,7 +15,6 @@ import com.tokko.cameandwentv2.R;
 import com.tokko.cameandwentv2.dagger.DaggerLogFragmentComponent;
 import com.tokko.cameandwentv2.events.EventLogEntryDeleted;
 import com.tokko.cameandwentv2.events.EventLogEntryAdded;
-import com.tokko.cameandwentv2.events.EventMinuteTicked;
 import com.tokko.cameandwentv2.events.OttoBus;
 import com.tokko.cameandwentv2.project.ProjectListFragment;
 import com.tokko.cameandwentv2.project.ProjectListFragment_;
@@ -26,15 +25,9 @@ import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EFragment;
-import org.androidannotations.annotations.OptionsItem;
-import org.androidannotations.annotations.OptionsMenu;
 import org.androidannotations.annotations.ViewById;
 
 import java.util.Collection;
-import java.util.List;
-import java.util.Optional;
-import java.util.Timer;
-import java.util.TimerTask;
 
 import javax.inject.Inject;
 
@@ -133,13 +126,13 @@ public class LogFragment extends ListFragment implements ProjectListFragment.OnP
             return;
         }
         LogEntry latestEntry = logEntryRepo.getLatestLogEntry();
-        LogEntry entry = new LogEntry(timeUtils.getCurrentTime(), clockButton.isChecked(), latestEntry.getProjectId());
+        LogEntry entry = new LogEntry(timeUtils.getCurrentTimeMillis(), clockButton.isChecked(), latestEntry.getProjectId());
         logEntryRepo.insertLogEntry(entry);
     }
 
     @Override
     public void onProjectChosen(Long projectId) {
-        LogEntry entry = new LogEntry(timeUtils.getCurrentTime(), clockButton.isChecked(), projectId);
+        LogEntry entry = new LogEntry(timeUtils.getCurrentTimeMillis(), clockButton.isChecked(), projectId);
         logEntryRepo.insertLogEntry(entry);
     }
 
