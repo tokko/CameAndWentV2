@@ -106,10 +106,10 @@ public class LogEntryEditFragment extends Fragment implements DatePickerDialog.O
         else
             entry = logEntryRepository.getLogEntry(id);
         if (entry.getId() != null) {
-            entry.setTime(timeUtils.getCurrentTimeMillis());
             datePickerButton.setVisibility(View.GONE);
             projectPicker.setVisibility(View.GONE);
         }
+        date.setTime(entry.getTime());
         comment.setText(entry.getComment());
         setDateButtonText(entry.getTime());
         setTimePickerButtonText(entry.getTime());

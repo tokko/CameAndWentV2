@@ -30,6 +30,7 @@ import org.androidannotations.annotations.OptionsItem;
 import org.androidannotations.annotations.ViewById;
 
 import java.util.Collection;
+import java.util.List;
 
 import javax.inject.Inject;
 
@@ -83,7 +84,6 @@ public class LogFragment extends ListFragment implements ProjectListFragment.OnP
         super.onResume();
         list.setAdapter(adapter);
         new EntryLoader().execute();
-        setStatusOfClockButton();
     }
 
     @Override
@@ -92,8 +92,7 @@ public class LogFragment extends ListFragment implements ProjectListFragment.OnP
         bus.unregister(this);
     }
 
-    public void setStatusOfClockButton() {
-        LogEntry latestLogEntry = logEntryRepo.getLatestLogEntry();
+    public void setStatusOfClockButton(LogEntry latestLogEntry) {
         if(clockButton == null) return;
         if (latestLogEntry != null)
             clockButton.setChecked(latestLogEntry.entered);
@@ -106,7 +105,7 @@ public class LogFragment extends ListFragment implements ProjectListFragment.OnP
     public void purgeDb() {
         logEntryRepo.deleteAll();
         adapter.clear();
-        setStatusOfClockButton();
+        reload();
     }
 
     @Subscribe
@@ -156,20 +155,20 @@ public class LogFragment extends ListFragment implements ProjectListFragment.OnP
         logEntryRepo.Commit(entry);
     }
 
-    private class EntryLoader extends AsyncTask<Void, Void, Collection<LogEntry>> {
+    private class EntryLoader extends AsyncTask<Void, Void, List<LogEntry>> {
 
         @Override
-        protected Collection<LogEntry> doInBackground(Void... voids) {
+        protected List<LogEntry> doInBackground(Void... voids) {
             return logEntryRepo.readAll();
         }
 
         @Override
-        protected void onPostExecute(Collection<LogEntry> logEntries) {
+        protected void onPostExecute(List<LogEntry> logEntries) {
             if (adapter != null) {
                 adapter.clear();
                 adapter.addAll(logEntries);
                 adapter.notifyDataSetChanged();
-                setStatusOfClockButton();
+                setStatusOfClockButton(logEntries.get(logEntries.size()-1));
             }
         }
     }
