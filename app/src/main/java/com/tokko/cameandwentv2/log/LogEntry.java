@@ -10,6 +10,8 @@ import org.greenrobot.greendao.annotation.ToOne;
 import org.greenrobot.greendao.DaoException;
 import com.tokko.cameandwentv2.project.ProjectDao;
 
+import java.util.Objects;
+
 @Entity
 public class LogEntry {
     @Id(autoincrement = true)
@@ -93,6 +95,11 @@ public class LogEntry {
 
     public void setProjectId(Long projectId) {
         this.projectId = projectId;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return obj instanceof LogEntry && Objects.equals(((LogEntry) obj).getId(), getId());
     }
 
     /** To-one relationship, resolved on first access. */

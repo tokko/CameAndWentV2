@@ -6,6 +6,7 @@ import android.os.Looper;
 
 import com.tokko.cameandwentv2.events.EventLogEntryAdded;
 import com.tokko.cameandwentv2.events.EventLogEntryDeleted;
+import com.tokko.cameandwentv2.events.EventLogEntryUpdated;
 import com.tokko.cameandwentv2.log.LogEntry;
 import com.tokko.cameandwentv2.log.LogEntryDao;
 
@@ -25,12 +26,19 @@ public class LogEntryRepository extends BaseRepository {
     @Inject
     public LogEntryRepository(Context context) {
         super(context);
-        logEntryDao = daoSession.getLogEntryDao();
+        if(daoSession != null)
+            logEntryDao = daoSession.getLogEntryDao();
     }
 
-    public void insertLogEntry(LogEntry entry){
-        logEntryDao.insert(entry);
-        bus.post(new EventLogEntryAdded(entry));
+    public void Commit(LogEntry entry){
+        if(entry.getId() == null) {
+            logEntryDao.insert(entry);
+            bus.post(new EventLogEntryAdded(entry));
+        }
+        else{
+            logEntryDao.update(entry);
+            bus.post(new EventLogEntryUpdated(entry));
+        }
     }
 
     public void deleteLogEntry(LogEntry entry){
@@ -39,7 +47,7 @@ public class LogEntryRepository extends BaseRepository {
     }
 
     public List<LogEntry> readAll() {
-        return purgeDoubleToggles(logEntryDao.loadAll());
+        return logEntryDao.loadAll();
     }
 
     public void deleteAll() {
@@ -75,7 +83,4 @@ public class LogEntryRepository extends BaseRepository {
         return logEntryDao.load(id);
     }
 
-    public void update(LogEntry entry) {
-        logEntryDao.update(entry);
-    }
 }

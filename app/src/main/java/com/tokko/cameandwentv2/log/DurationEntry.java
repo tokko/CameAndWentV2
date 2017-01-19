@@ -4,6 +4,9 @@ import com.tokko.cameandwentv2.dagger.DaggerDurationEntryComponent;
 import com.tokko.cameandwentv2.utils.TimeUtils;
 
 
+import org.joda.time.DateTime;
+import org.joda.time.MutableDateTime;
+
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -30,7 +33,7 @@ public class DurationEntry {
     }
 
     public long getDate() {
-        return logEntries.get(0).getDate();
+       return logEntries.get(0).getDate();
     }
 
     public List<LogEntry> getLogEntries() {

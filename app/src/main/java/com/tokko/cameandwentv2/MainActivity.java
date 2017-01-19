@@ -50,9 +50,7 @@ public class MainActivity extends Activity implements LogEntryEditFragment.LogEd
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
         if(intent.getAction().equals(ACTION_EDIT_LOG)) {
-            LogEntryEditFragment_ fragment = new LogEntryEditFragment_();
-            fragment.setEntry(logEntryRepository.getLogEntry(intent.getLongExtra(EXTRA_LOGENTRYID, -1L)));
-            fragment.setCallbacks(this);
+            LogEntryEditFragment_ fragment = LogEntryEditFragment_.Create(intent.getLongExtra(EXTRA_LOGENTRYID, -1L));
             getFragmentManager().beginTransaction().addToBackStack("edit").replace(R.id.mainlayout, fragment).commit();
         }
     }

@@ -1,10 +1,11 @@
 package com.tokko.cameandwentv2.log;
 
 import android.app.DatePickerDialog;
-import android.app.DialogFragment;
 import android.app.Fragment;
 import android.app.TimePickerDialog;
+import android.content.Context;
 import android.os.AsyncTask;
+import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -14,9 +15,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.TimePicker;
 
-import com.squareup.otto.Subscribe;
 import com.tokko.cameandwentv2.R;
-import com.tokko.cameandwentv2.events.EventDatePicked;
 import com.tokko.cameandwentv2.events.OttoBus;
 import com.tokko.cameandwentv2.project.Project;
 import com.tokko.cameandwentv2.resourceaccess.LogEntryRepository;
@@ -35,11 +34,10 @@ import org.joda.time.MutableDateTime;
 import java.sql.Date;
 import java.text.SimpleDateFormat;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @EFragment(R.layout.logentryedit)
-public class LogEntryEditFragment extends Fragment implements AdapterView.OnItemClickListener, DatePickerDialog.OnDateSetListener, TimePickerDialog.OnTimeSetListener {
-
+public class LogEntryEditFragment extends Fragment implements DatePickerDialog.OnDateSetListener, TimePickerDialog.OnTimeSetListener, AdapterView.OnItemSelectedListener {
+    public static final String EXTRA_ID = "EXTRA_ID";
     @ViewById
     Button timePickerButton;
     @ViewById
@@ -57,29 +55,39 @@ public class LogEntryEditFragment extends Fragment implements AdapterView.OnItem
     @Bean
     OttoBus bus;
 
-    private ArrayAdapter<String> adapter;
+    private ArrayAdapter<Project> adapter;
 
     private LogEntry entry;
     private LogEditCallbacks callbacks;
 
     private MutableDateTime date = new MutableDateTime();
 
-    public void setEntry(LogEntry entry){
-        this.entry = entry;
+    public static LogEntryEditFragment_ Create(Long id){
+        Bundle extra = new Bundle();
+        extra.putLong(EXTRA_ID, id);
+        LogEntryEditFragment_ fragment = new LogEntryEditFragment_();
+        fragment.setArguments(extra);
+        return fragment;
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        callbacks = (LogEditCallbacks) getActivity();
     }
 
     @AfterInject
-    public void initBus(){
+    public void initBus() {
         bus.register(this);
     }
 
 
-    private void setDateButtonText(DateTime dateTime){
-        datePickerButton.setText(new SimpleDateFormat("yyyy-MM-dd").format(new Date((dateTime.getMillis()))));
+    private void setDateButtonText(long time) {
+        datePickerButton.setText(new SimpleDateFormat("yyyy-MM-dd").format(new Date(time)));
     }
 
-    private void setTimePickerButtonText(DateTime dateTime) {
-        timePickerButton.setText(new SimpleDateFormat("HH:mm").format(new Date((dateTime.getMillis()))));
+    private void setTimePickerButtonText(long time) {
+        timePickerButton.setText(new SimpleDateFormat("HH:mm").format(new Date(time)));
     }
 
     @Override
@@ -88,77 +96,78 @@ public class LogEntryEditFragment extends Fragment implements AdapterView.OnItem
         bus.unregister(this);
     }
 
-    @AfterViews
-    public void initForm(){
-        if(entry.getId() != null){
-            entry.setTime(timeUtils.getCurrentTimeMillis());
-        }
-        comment.setText(entry.getComment());
-        setDateButtonText(new DateTime(entry.getDate()));
-        setTimePickerButtonText(new DateTime(entry.getDate()));
-    }
-
     @Override
     public void onResume() {
         super.onResume();
         new ProjectLoader().execute();
+        Long id = getArguments().getLong(EXTRA_ID, -1);
+        if(id == -1)
+            entry = new LogEntry(timeUtils.getCurrentTimeMillis(), false, 0L);
+        else
+            entry = logEntryRepository.getLogEntry(id);
+        if (entry.getId() != null) {
+            entry.setTime(timeUtils.getCurrentTimeMillis());
+            datePickerButton.setVisibility(View.GONE);
+            projectPicker.setVisibility(View.GONE);
+        }
+        comment.setText(entry.getComment());
+        setDateButtonText(entry.getTime());
+        setTimePickerButtonText(entry.getTime());
+        projectPicker.setOnItemSelectedListener(this);
     }
 
     @Click(R.id.datePickerButton)
-    public void chooseDate(){
-        DateTime dt = new DateTime(entry.getDate());
+    public void chooseDate() {
+        DateTime dt = new DateTime(entry.getTime());
         DatePickerDialog dialogBuilder = new DatePickerDialog(getActivity(), this, dt.getYear(), dt.getMonthOfYear(), dt.getDayOfMonth());
         dialogBuilder.show();
     }
+
     @Click(R.id.timePickerButton)
-    public void chooseTime(){
-        DateTime dt = new DateTime(entry.getDate());
+    public void chooseTime() {
+        DateTime dt = new DateTime(entry.getTime());
         TimePickerDialog dialog = new TimePickerDialog(getActivity(), this, dt.getHourOfDay(), dt.getMinuteOfHour(), true);
         dialog.show();
     }
+
     @Click(R.id.ok)
-    public void onOk(){
-        /*
-        LogEntry entry = new LogEntry(new DateTime(datePicker.getYear(), datePicker.getMonth(), datePicker.getDayOfMonth(), timePicker.getHour(), timePicker.getMinute()).getMillis(), true, 1L, comment.getText().toString());
-        if(entry.getId() == null)
-            logEntryRepository.insertLogEntry(entry);
-        else
-            logEntryRepository.update(entry);
+    public void onOk() {
+        String comment = this.comment.getText().toString();
+        entry.setComment(comment);
+        entry.setTime(date.getMillis());
+        logEntryRepository.Commit(entry);
         dismiss();
-        */
     }
 
     @Click(R.id.cancel)
-    public void dismiss(){
+    public void dismiss() {
         callbacks.OnFinished();
-    }
-    public void setCallbacks(LogEditCallbacks callbacks){
-        this.callbacks = callbacks;
-    }
-
-    @Override
-    public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-        projectPicker.setPrompt(adapter.getItem(i));
     }
 
     @Override
     public void onDateSet(DatePicker datePicker, int year, int month, int day) {
         date.setDate(year, month, day);
-        setDateButtonText(date.toDateTime());
+        setDateButtonText(date.getMillis());
     }
 
     @Override
     public void onTimeSet(TimePicker timePicker, int hour, int minute) {
         date.setTime(hour, minute, 0, 0);
-        setTimePickerButtonText(date.toDateTime());
+        setTimePickerButtonText(date.getMillis());
     }
 
-    @Subscribe
-    public void onDatePicked(EventDatePicked event){
+    @Override
+    public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+        entry.setProject(adapter.getItem(i));
+        projectPicker.setPrompt(entry.project.getTitle());
+    }
+
+    @Override
+    public void onNothingSelected(AdapterView<?> adapterView) {
 
     }
 
-    public interface LogEditCallbacks{
+    public interface LogEditCallbacks {
         void OnFinished();
     }
 
@@ -172,7 +181,7 @@ public class LogEntryEditFragment extends Fragment implements AdapterView.OnItem
 
         @Override
         protected void onPostExecute(List<Project> projects) {
-            adapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_spinner_dropdown_item, android.R.id.text1, projects.stream().map(Project::getTitle).collect(Collectors.toList()));
+            adapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_spinner_dropdown_item, android.R.id.text1, projects);
             projectPicker.setAdapter(adapter);
             adapter.notifyDataSetChanged();
         }

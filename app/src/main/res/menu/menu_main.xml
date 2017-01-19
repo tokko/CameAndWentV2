@@ -4,7 +4,15 @@
     tools:context="com.tokko.cameandwentv2.MainActivity">
 
     <item
+        android:id="@+id/reload"
+        android:title="reload"
+        app:showAsAction="always" />
+    <item
         android:id="@+id/manageProjects"
         android:title="Projects"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/action_clear"
+        android:title="clear"
         app:showAsAction="never" />
 </menu>

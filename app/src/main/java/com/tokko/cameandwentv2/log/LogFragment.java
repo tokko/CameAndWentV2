@@ -15,6 +15,7 @@ import com.tokko.cameandwentv2.R;
 import com.tokko.cameandwentv2.dagger.DaggerLogFragmentComponent;
 import com.tokko.cameandwentv2.events.EventLogEntryDeleted;
 import com.tokko.cameandwentv2.events.EventLogEntryAdded;
+import com.tokko.cameandwentv2.events.EventLogEntryUpdated;
 import com.tokko.cameandwentv2.events.OttoBus;
 import com.tokko.cameandwentv2.project.ProjectListFragment;
 import com.tokko.cameandwentv2.project.ProjectListFragment_;
@@ -25,6 +26,7 @@ import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EFragment;
+import org.androidannotations.annotations.OptionsItem;
 import org.androidannotations.annotations.ViewById;
 
 import java.util.Collection;
@@ -92,6 +94,7 @@ public class LogFragment extends ListFragment implements ProjectListFragment.OnP
 
     public void setStatusOfClockButton() {
         LogEntry latestLogEntry = logEntryRepo.getLatestLogEntry();
+        if(clockButton == null) return;
         if (latestLogEntry != null)
             clockButton.setChecked(latestLogEntry.entered);
         else
@@ -99,22 +102,39 @@ public class LogFragment extends ListFragment implements ProjectListFragment.OnP
     }
 
 
-    //@OptionsItem(R.id.action_clear)
+    @OptionsItem(R.id.action_clear)
     public void purgeDb() {
         logEntryRepo.deleteAll();
         adapter.clear();
+        setStatusOfClockButton();
     }
 
     @Subscribe
     public void deleteLogEntry(EventLogEntryDeleted entry) {
-        adapter.delete(entry.getEntry());
-        setStatusOfClockButton();
+        new EntryLoader().execute();
+
+        //  adapter.delete(entry.getEntry());
+    //    setStatusOfClockButton();
     }
 
     @Subscribe
     public void addLogEntry(EventLogEntryAdded entryAdded) {
-        adapter.add(entryAdded.getEntry());
-        setStatusOfClockButton();
+        new EntryLoader().execute();
+
+//        adapter.add(entryAdded.getEntry());
+  //      setStatusOfClockButton();
+    }
+
+    @Subscribe
+    public void updateEntry(EventLogEntryUpdated entryUpdated) {
+     //   adapter.delete(entryUpdated.getEntry());
+     //   adapter.add(entryUpdated.getEntry());
+        new EntryLoader().execute();
+
+    }
+    @OptionsItem(R.id.reload)
+    public void reload(){
+        new EntryLoader().execute();
     }
 
     @Click(R.id.clockButton)
@@ -127,13 +147,13 @@ public class LogFragment extends ListFragment implements ProjectListFragment.OnP
         }
         LogEntry latestEntry = logEntryRepo.getLatestLogEntry();
         LogEntry entry = new LogEntry(timeUtils.getCurrentTimeMillis(), clockButton.isChecked(), latestEntry.getProjectId());
-        logEntryRepo.insertLogEntry(entry);
+        logEntryRepo.Commit(entry);
     }
 
     @Override
     public void onProjectChosen(Long projectId) {
         LogEntry entry = new LogEntry(timeUtils.getCurrentTimeMillis(), clockButton.isChecked(), projectId);
-        logEntryRepo.insertLogEntry(entry);
+        logEntryRepo.Commit(entry);
     }
 
     private class EntryLoader extends AsyncTask<Void, Void, Collection<LogEntry>> {
@@ -149,6 +169,7 @@ public class LogFragment extends ListFragment implements ProjectListFragment.OnP
                 adapter.clear();
                 adapter.addAll(logEntries);
                 adapter.notifyDataSetChanged();
+                setStatusOfClockButton();
             }
         }
     }
