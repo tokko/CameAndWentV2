@@ -1,6 +1,9 @@
 package com.tokko.cameandwentv2.log;
 
+import android.app.DatePickerDialog;
 import android.app.DialogFragment;
+import android.app.Fragment;
+import android.app.TimePickerDialog;
 import android.os.AsyncTask;
 import android.view.View;
 import android.widget.AdapterView;
@@ -35,10 +38,10 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @EFragment(R.layout.logentryedit)
-public class LogEntryEditFragment extends DialogFragment implements AdapterView.OnItemClickListener {
+public class LogEntryEditFragment extends Fragment implements AdapterView.OnItemClickListener, DatePickerDialog.OnDateSetListener, TimePickerDialog.OnTimeSetListener {
 
     @ViewById
-    TimePicker timePicker;
+    Button timePickerButton;
     @ViewById
     Button datePickerButton;
     @ViewById
@@ -60,8 +63,8 @@ public class LogEntryEditFragment extends DialogFragment implements AdapterView.
     private LogEditCallbacks callbacks;
 
     private MutableDateTime date = new MutableDateTime();
-    public void setEntry(LogEntry entry){
 
+    public void setEntry(LogEntry entry){
         this.entry = entry;
     }
 
@@ -69,15 +72,16 @@ public class LogEntryEditFragment extends DialogFragment implements AdapterView.
     public void initBus(){
         bus.register(this);
     }
-    @Subscribe
-    public void onDatePicked(EventDatePicked event){
-        date.setDate(event.getYear(), event.getMonth(), event.getDay());
-        setDateButtonText(new DateTime(event.getYear(), event.getMonth(), event.getDay(), 0, 0));
+
+
+    private void setDateButtonText(DateTime dateTime){
+        datePickerButton.setText(new SimpleDateFormat("yyyy-MM-dd").format(new Date((dateTime.getMillis()))));
     }
 
-    private void setDateButtonText(DateTime datetime){
-        datePickerButton.setText(new SimpleDateFormat("yyyy-MM-dd").format(new Date((datetime.getMillis()))));
+    private void setTimePickerButtonText(DateTime dateTime) {
+        timePickerButton.setText(new SimpleDateFormat("HH:mm").format(new Date((dateTime.getMillis()))));
     }
+
     @Override
     public void onStop() {
         super.onStop();
@@ -86,11 +90,15 @@ public class LogEntryEditFragment extends DialogFragment implements AdapterView.
 
     @AfterViews
     public void initForm(){
-        timePicker.setHour(new DateTime(entry.getTime()).getHourOfDay());
-        timePicker.setMinute(new DateTime(entry.getTime()).getMinuteOfDay());
+        if(entry.getId() != null){
+            entry.setTime(timeUtils.getCurrentTimeMillis());
+        }
         comment.setText(entry.getComment());
-        setDateButtonText(timeUtils.getCurrentTimeDateTime());
+        setDateButtonText(new DateTime(entry.getDate()));
+        setTimePickerButtonText(new DateTime(entry.getDate()));
     }
+
+
 
     @Override
     public void onResume() {
@@ -100,7 +108,16 @@ public class LogEntryEditFragment extends DialogFragment implements AdapterView.
 
     @Click(R.id.datePickerButton)
     public void chooseDate(){
-        DatePickerFragment_.Create(timeUtils.getCurrentTimeDateTime()).show(getFragmentManager(), "date");
+       // DatePickerFragment_.Create(timeUtils.getCurrentTimeDateTime()).show(getFragmentManager(), "date");
+        DateTime dt = new DateTime(entry.getDate());
+        DatePickerDialog dialogBuilder = new DatePickerDialog(getActivity(), this, dt.getYear(), dt.getMonthOfYear(), dt.getDayOfMonth());
+        dialogBuilder.show();
+    }
+    @Click(R.id.timePickerButton)
+    public void chooseTime(){
+        DateTime dt = new DateTime(entry.getDate());
+        TimePickerDialog dialog = new TimePickerDialog(getActivity(), this, dt.getHourOfDay(), dt.getMinuteOfHour(), true);
+        dialog.show();
     }
     @Click(R.id.ok)
     public void onOk(){
@@ -125,6 +142,23 @@ public class LogEntryEditFragment extends DialogFragment implements AdapterView.
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
         projectPicker.setPrompt(adapter.getItem(i));
+    }
+
+    @Override
+    public void onDateSet(DatePicker datePicker, int year, int month, int day) {
+        date.setDate(year, month, day);
+        setDateButtonText(date.toDateTime());
+    }
+
+    @Override
+    public void onTimeSet(TimePicker timePicker, int hour, int minute) {
+        date.setTime(hour, minute, 0, 0);
+        setTimePickerButtonText(date.toDateTime());
+    }
+
+    @Subscribe
+    public void onDatePicked(EventDatePicked event){
+
     }
 
     public interface LogEditCallbacks{
