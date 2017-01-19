@@ -62,14 +62,14 @@ public class LogFragment extends ListFragment implements ProjectListFragment.OnP
     }
 
     @AfterInject
-    public void initBus(){
+    public void initBus() {
         bus.register(this);
     }
 
     @Override
     public void onStart() {
         super.onStart();
-        }
+    }
 
     @Override
     public void onStop() {
@@ -90,9 +90,9 @@ public class LogFragment extends ListFragment implements ProjectListFragment.OnP
         bus.unregister(this);
     }
 
-    public void setStatusOfClockButton(){
+    public void setStatusOfClockButton() {
         LogEntry latestLogEntry = logEntryRepo.getLatestLogEntry();
-        if(latestLogEntry != null)
+        if (latestLogEntry != null)
             clockButton.setChecked(latestLogEntry.entered);
         else
             clockButton.setChecked(false);
@@ -100,26 +100,26 @@ public class LogFragment extends ListFragment implements ProjectListFragment.OnP
 
 
     //@OptionsItem(R.id.action_clear)
-    public void purgeDb(){
+    public void purgeDb() {
         logEntryRepo.deleteAll();
         adapter.clear();
     }
 
     @Subscribe
-    public void deleteLogEntry(EventLogEntryDeleted entry){
+    public void deleteLogEntry(EventLogEntryDeleted entry) {
         adapter.delete(entry.getEntry());
         setStatusOfClockButton();
     }
 
     @Subscribe
-    public void addLogEntry(EventLogEntryAdded entryAdded){
+    public void addLogEntry(EventLogEntryAdded entryAdded) {
         adapter.add(entryAdded.getEntry());
         setStatusOfClockButton();
     }
 
     @Click(R.id.clockButton)
-    public void clockButtonClick(){
-        if(clockButton.isChecked()){
+    public void clockButtonClick() {
+        if (clockButton.isChecked()) {
             ProjectListFragment_ projectChooser = new ProjectListFragment_();
             projectChooser.setChooserMode(this);
             projectChooser.show(getFragmentManager(), "projectChooser");
@@ -145,8 +145,11 @@ public class LogFragment extends ListFragment implements ProjectListFragment.OnP
 
         @Override
         protected void onPostExecute(Collection<LogEntry> logEntries) {
-            if(adapter != null)
+            if (adapter != null) {
+                adapter.clear();
                 adapter.addAll(logEntries);
+                adapter.notifyDataSetChanged();
+            }
         }
     }
 }
