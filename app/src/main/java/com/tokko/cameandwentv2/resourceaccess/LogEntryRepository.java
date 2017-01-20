@@ -72,8 +72,8 @@ public class LogEntryRepository extends BaseRepository {
         return result;
     }
 
-    private List<LogEntry> adjustOverlaps(List<LogEntry> entries) {
-        entries = sortLogEntries(entries);
+    public List<LogEntry> adjustOverlaps(List<LogEntry> entries) {
+        //entries = sortLogEntries(entries);
 
         return entries;
     }

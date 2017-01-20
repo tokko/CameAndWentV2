@@ -11,6 +11,8 @@ import org.mockito.Spy;
 import java.util.Arrays;
 import java.util.List;
 
+import static junit.framework.Assert.fail;
+
 public class LogEntryRepositoryTests {
     @Spy
     LogEntryRepository repo;
@@ -42,5 +44,15 @@ public class LogEntryRepositoryTests {
         Assert.assertEquals("There can be exactly 4", 2, result.size());
         Assert.assertEquals(2, result.get(0).getTime());
         Assert.assertEquals(4, result.get(1).getTime());
+    }
+
+    @Test
+    public void adjustOverlabps_OverlappingArrivals_Removes_SecondOne() {
+        List<LogEntry> list = Arrays.asList(
+                new LogEntry(1, true, 0L),
+                new LogEntry(2, true, 0L)
+                //TODO:finish this shiet
+        );
+        fail();
     }
 }
