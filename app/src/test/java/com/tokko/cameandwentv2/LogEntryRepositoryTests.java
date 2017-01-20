@@ -11,10 +11,6 @@ import org.mockito.Spy;
 import java.util.Arrays;
 import java.util.List;
 
-/**
- * Created by andre on 11/01/2017.
- */
-
 public class LogEntryRepositoryTests {
     @Spy
     LogEntryRepository repo;
