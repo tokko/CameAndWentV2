@@ -47,30 +47,39 @@ public class LogEntryRepository extends BaseRepository {
     }
 
     public List<LogEntry> readAll() {
-        return purgeDoubleToggles(getDao().loadAll());
+        getDoubles(getDao().loadAll()).forEach(this::delete);
+        return getDao().loadAll();
     }
 
     public void deleteAll() {
         getDao().deleteAll();
     }
 
-    public List<LogEntry> purgeDoubleToggles(List<LogEntry> entries){
+    public List<LogEntry> getDoubles(List<LogEntry> entries) {
         List<LogEntry> result = new ArrayList<>();
-        List<LogEntry> sortedEntries = entries.stream().sorted((a, b) -> (int) (a.getTime() - b.getTime())).collect(Collectors.toList());
+        List<LogEntry> sortedEntries = sortLogEntries(entries);
         if(sortedEntries.isEmpty()) return result;
         boolean state = sortedEntries.get(0).entered;
-        result.add(sortedEntries.get(0));
         for (int i = 1; i < sortedEntries.size(); i++){
             LogEntry currentEntry = sortedEntries.get(i);
             boolean currentState = currentEntry.entered;
             if(state == currentState){
-                delete(currentEntry);
+                result.add(currentEntry);
                 continue;
             }
             state = currentState;
-            result.add(currentEntry);
         }
         return result;
+    }
+
+    private List<LogEntry> adjustOverlaps(List<LogEntry> entries) {
+        entries = sortLogEntries(entries);
+
+        return entries;
+    }
+
+    private List<LogEntry> sortLogEntries(List<LogEntry> entries) {
+        return entries.stream().sorted((a, b) -> (int) (a.getTime() - b.getTime())).collect(Collectors.toList());
     }
 
     public LogEntry getLatestLogEntry() {
