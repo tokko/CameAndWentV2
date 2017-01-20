@@ -21,7 +21,7 @@ public class ProjectRepository extends BaseRepository {
     }
 
     public ProjectDao getDao(){
-        return daoSession.getProjectDao();
+        return getSession().getProjectDao();
     }
     public List<Project> readAll() {
         return getDao().loadAll();

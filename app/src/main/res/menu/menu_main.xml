@@ -15,4 +15,9 @@
         android:id="@+id/action_clear"
         android:title="clear"
         app:showAsAction="never" />
+    <item
+        android:id="@+id/add_logentry"
+        android:title="Add entry"
+        app:showAsAction="never" />
+
 </menu>

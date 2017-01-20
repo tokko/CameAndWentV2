@@ -27,11 +27,10 @@ public class LogEntryRepository extends BaseRepository {
     }
 
     public LogEntryDao getDao(){
-        if(daoSession != null)
-            return daoSession.getLogEntryDao();
-        return null;
+        return getSession().getLogEntryDao();
     }
-    public void Commit(LogEntry entry){
+
+    public void commit(LogEntry entry) {
         if(entry.getId() == null) {
             getDao().insert(entry);
             bus.post(new EventLogEntryAdded(entry));
@@ -48,7 +47,7 @@ public class LogEntryRepository extends BaseRepository {
     }
 
     public List<LogEntry> readAll() {
-        return purgeDoubleToggles(getDao().loadAll());
+        return getDao().loadAll();
     }
 
     public void deleteAll() {

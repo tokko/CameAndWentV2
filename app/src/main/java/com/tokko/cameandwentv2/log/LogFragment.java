@@ -1,6 +1,7 @@
 package com.tokko.cameandwentv2.log;
 
 import android.app.ListFragment;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
@@ -10,6 +11,8 @@ import android.widget.ExpandableListView;
 import android.widget.ToggleButton;
 
 import com.squareup.otto.Subscribe;
+import com.tokko.cameandwentv2.MainActivity;
+import com.tokko.cameandwentv2.MainActivity_;
 import com.tokko.cameandwentv2.R;
 import com.tokko.cameandwentv2.dagger.DaggerLogFragmentComponent;
 import com.tokko.cameandwentv2.events.EventLogEntryAdded;
@@ -21,7 +24,6 @@ import com.tokko.cameandwentv2.project.ProjectListFragment_;
 import com.tokko.cameandwentv2.resourceaccess.LogEntryRepository;
 import com.tokko.cameandwentv2.utils.TimeUtils;
 
-import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.Click;
@@ -64,11 +66,6 @@ public class LogFragment extends ListFragment implements ProjectListFragment.OnP
         return null;
     }
 
-    @AfterInject
-    public void initBus() {
-        bus.register(this);
-    }
-
     @Override
     public void onStart() {
         super.onStart();
@@ -82,8 +79,15 @@ public class LogFragment extends ListFragment implements ProjectListFragment.OnP
     @Override
     public void onResume() {
         super.onResume();
+        bus.register(this);
         list.setAdapter(adapter);
         reload();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        bus.unregister(this);
     }
 
     @Override
@@ -103,6 +107,14 @@ public class LogFragment extends ListFragment implements ProjectListFragment.OnP
     @AfterViews
     public void initViews() {
         list.setStackFromBottom(true);
+    }
+
+    @OptionsItem(R.id.add_logentry)
+    public void onAddLogEntryClicked() {
+        Intent i = new Intent(getActivity(), MainActivity_.class);
+        i.setAction(MainActivity.ACTION_EDIT_LOG);
+        i.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        getActivity().startActivity(i);
     }
 
     @OptionsItem(R.id.action_clear)
@@ -129,20 +141,24 @@ public class LogFragment extends ListFragment implements ProjectListFragment.OnP
     @OptionsItem(R.id.reload)
     public void reload(){
         List<Long> expandIds = new ArrayList<>();
-        for(int i = 0; i < adapter.getGroupCount(); i++)
-            if(list.isGroupExpanded(i))
-                expandIds.add(adapter.getGroupId(i));
+        if (list != null)
+            for (int i = 0; i < adapter.getGroupCount(); i++)
+                if (list.isGroupExpanded(i))
+                    expandIds.add(adapter.getGroupId(i));
         if (adapter != null) {
             List<LogEntry> logEntries = logEntryRepo.readAll();
             adapter.clear();
             adapter.addAll(logEntries);
             adapter.notifyDataSetChanged();
-            setStatusOfClockButton(logEntries.get(logEntries.size()-1));
+            if (!logEntries.isEmpty())
+                setStatusOfClockButton(logEntries.get(logEntries.size() - 1));
         }
-        list.expandGroup(adapter.getGroupCount()-1);
-        for(int i = 0; i < adapter.getGroupCount(); i++)
-            if(expandIds.contains(adapter.getGroupId(i)))
-                list.expandGroup(i);
+        if (!adapter.isEmpty())
+            list.expandGroup(adapter.getGroupCount() - 1);
+        if (list != null)
+            for (int i = 0; i < adapter.getGroupCount(); i++)
+                if (expandIds.contains(adapter.getGroupId(i)))
+                    list.expandGroup(i);
     }
 
     @Click(R.id.clockButton)
@@ -155,12 +171,12 @@ public class LogFragment extends ListFragment implements ProjectListFragment.OnP
         }
         LogEntry latestEntry = logEntryRepo.getLatestLogEntry();
         LogEntry entry = new LogEntry(timeUtils.getCurrentTimeMillis(), clockButton.isChecked(), latestEntry.getProjectId());
-        logEntryRepo.Commit(entry);
+        logEntryRepo.commit(entry);
     }
 
     @Override
     public void onProjectChosen(Long projectId) {
         LogEntry entry = new LogEntry(timeUtils.getCurrentTimeMillis(), clockButton.isChecked(), projectId);
-        logEntryRepo.Commit(entry);
+        logEntryRepo.commit(entry);
     }
 }
