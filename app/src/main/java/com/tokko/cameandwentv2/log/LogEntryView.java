@@ -2,8 +2,6 @@ package com.tokko.cameandwentv2.log;
 
 import android.content.Context;
 import android.content.Intent;
-import android.view.View;
-import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -34,11 +32,10 @@ public class LogEntryView extends LinearLayout{
 
     @Bean
     OttoBus bus;
-
-    private SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm");
-    private LogEntry entry;
     @Bean
     LogEntryRepository logEntryRepository;
+    private SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm");
+    private LogEntry entry;
     private Context context;
 
     public LogEntryView(Context context) {
@@ -66,6 +63,6 @@ public class LogEntryView extends LinearLayout{
 
     @Click(R.id.delete)
     public void delete(){
-        logEntryRepository.deleteLogEntry(entry);
+        logEntryRepository.delete(entry);
     }
 }

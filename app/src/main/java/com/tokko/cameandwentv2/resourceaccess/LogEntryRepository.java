@@ -41,13 +41,13 @@ public class LogEntryRepository extends BaseRepository {
         }
     }
 
-    public void deleteLogEntry(LogEntry entry){
+    public void delete(LogEntry entry) {
         getDao().delete(entry);
         new Handler(Looper.getMainLooper()).post(() -> bus.post(new EventLogEntryDeleted(entry)));
     }
 
     public List<LogEntry> readAll() {
-        return getDao().loadAll();
+        return purgeDoubleToggles(getDao().loadAll());
     }
 
     public void deleteAll() {
@@ -64,7 +64,7 @@ public class LogEntryRepository extends BaseRepository {
             LogEntry currentEntry = sortedEntries.get(i);
             boolean currentState = currentEntry.entered;
             if(state == currentState){
-                deleteLogEntry(currentEntry);
+                delete(currentEntry);
                 continue;
             }
             state = currentState;
@@ -79,7 +79,7 @@ public class LogEntryRepository extends BaseRepository {
         return entries.get(0);
     }
 
-    public LogEntry getLogEntry(Long id) {
+    public LogEntry get(Long id) {
         return getDao().load(id);
     }
 

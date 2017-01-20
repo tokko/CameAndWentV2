@@ -121,7 +121,7 @@ public class LogEntryEditFragment extends Fragment implements AdapterView.OnItem
             setTimePickerButtonText(endTimePickerButton, "Time of departure", endDate.getMillis());
         }
         else
-            entry = logEntryRepository.getLogEntry(id);
+            entry = logEntryRepository.get(id);
         date.setTime(entry.getTime());
         comment.setText(entry.getComment());
         setDateButtonText(entry.getTime());
