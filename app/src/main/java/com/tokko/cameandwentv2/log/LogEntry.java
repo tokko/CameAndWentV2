@@ -11,6 +11,7 @@ import org.greenrobot.greendao.DaoException;
 import com.tokko.cameandwentv2.project.ProjectDao;
 
 import java.util.Objects;
+import com.tokko.cameandwentv2.project.DaoSession;
 
 @Entity
 public class LogEntry {
