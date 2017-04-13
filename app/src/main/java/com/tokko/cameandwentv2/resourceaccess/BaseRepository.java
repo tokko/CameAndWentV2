@@ -4,8 +4,8 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 
 import com.tokko.cameandwentv2.events.OttoBus;
-import com.tokko.cameandwentv2.log.DaoMaster;
-import com.tokko.cameandwentv2.log.DaoSession;
+import com.tokko.cameandwentv2.project.DaoMaster;
+import com.tokko.cameandwentv2.project.DaoSession;
 
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EBean;
